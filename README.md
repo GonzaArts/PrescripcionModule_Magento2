@@ -2,7 +2,7 @@
 
 [![Magento Version](https://img.shields.io/badge/Magento-2.4.5--p1-orange.svg)](https://devdocs.magento.com/)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://www.php.net/)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
+[![License](https://img.shields.io/badge/License-GPL--3.0--or--later-green.svg)](LICENSE)
 
 Módulo completo de Magento 2 para la venta de gafas graduadas con configurador interactivo de lentes, pricing dinámico en tiempo real, gestión completa de prescripciones y recetas médicas con integración total en carrito, checkout y pedidos.
 
@@ -1062,10 +1062,10 @@ php bin/magento cache:status
 - Documentación de API
 
 ## 👥 Contribución
+Este proyecto está disponible bajo licencia GPL-3.0-or-later. Las contribuciones son bienvenidas mediante pull requests.
+Para reportar bugs o solicitar funcionalidades:
 
-Este es un módulo propietario. Para reportar bugs o solicitar funcionalidades:
-
-1. Contacta con el equipo de desarrollo
+1. Abre un issue en el repositorio
 2. Proporciona logs relevantes (`var/log/prescription.log`)
 3. Describe los pasos para reproducir el problema
 4. Incluye configuración del sistema (Magento, PHP, MySQL versions)
@@ -1167,6 +1167,7 @@ tail -n 50 var/log/prescription.log
 **Magento**: 2.4.5-p1+  
 **PHP**: 8.1+  
 **Licencia**: Proprietary  
+**Licencia**: GPL-3.0-or-later  
 
 **Desarrollado por**: GonzaArts Powerline Design  
 **Fecha de lanzamiento**: Diciembre 2025  
