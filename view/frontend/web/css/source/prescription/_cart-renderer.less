@@ -1,0 +1,213 @@
+// Cart Item Renderer - Prescription Details
+// Collapsible prescription configuration display in cart
+
+.prescription-configuration-section {
+    margin-top: @prescription-gap-lg;
+    padding-top: @prescription-gap-lg;
+    border-top: 1px solid @prescription-border;
+
+    // Toggle button
+    .prescription-toggle {
+        display: flex;
+        align-items: center;
+        gap: @prescription-gap-sm;
+        padding: @prescription-gap-md @prescription-gap-lg;
+        background: @prescription-bg-light;
+        border: 1px solid @prescription-border-dark;
+        border-radius: @prescription-radius-sm;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: @prescription-text;
+        transition: all @prescription-transition-fast;
+        width: 100%;
+        text-align: left;
+
+        &:hover {
+            background: #ebebeb;
+        }
+
+        .icon-expand {
+            transition: transform @prescription-transition-normal;
+        }
+
+        &.expanded .icon-expand {
+            transform: rotate(180deg);
+        }
+    }
+
+    // Details panel
+    .prescription-details {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: all @prescription-transition-normal;
+        padding: 0 @prescription-gap-lg;
+
+        &.visible {
+            max-height: 1000px;
+            opacity: 1;
+            padding: @prescription-gap-lg;
+        }
+
+        // Sections
+        .prescription-values,
+        .use-type-section,
+        .lens-section,
+        .treatments-section,
+        .attachment-section {
+            margin-bottom: @prescription-gap-lg;
+
+            h5 {
+                margin: 0 0 @prescription-gap-md 0;
+                color: @prescription-primary;
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+
+        // Eye data
+        .eye-data {
+            padding: @prescription-gap-md;
+            background: @prescription-bg-lighter;
+            border-left: 3px solid @prescription-primary;
+            border-radius: @prescription-radius-sm;
+            margin-bottom: @prescription-gap-md;
+
+            strong {
+                display: block;
+                margin-bottom: @prescription-gap-xs;
+                color: @prescription-text;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+
+                li {
+                    padding: 3px 0;
+                    font-size: 13px;
+                    color: @prescription-text-light;
+
+                    strong {
+                        display: inline;
+                        font-weight: 600;
+                        color: @prescription-text;
+                    }
+                }
+            }
+        }
+
+        // Use type
+        .use-type-value {
+            padding: @prescription-gap-sm @prescription-gap-md;
+            background: @prescription-bg-lighter;
+            border-radius: @prescription-radius-sm;
+            font-weight: 600;
+            color: @prescription-text;
+        }
+
+        // Lens info
+        .lens-info {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                padding: @prescription-gap-xs 0;
+                font-size: 13px;
+
+                strong {
+                    font-weight: 600;
+                    color: @prescription-text;
+                }
+            }
+        }
+
+        // Treatments
+        .treatments-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: @prescription-gap-sm;
+
+            .treatment-tag {
+                padding: @prescription-gap-xs @prescription-gap-md;
+                background: @prescription-primary;
+                color: #fff;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+        }
+
+        // Attachment
+        .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: @prescription-gap-md;
+            padding: @prescription-gap-md;
+            background: @prescription-bg-lighter;
+            border: 1px solid @prescription-border;
+            border-radius: @prescription-radius-sm;
+
+            .attachment-icon {
+                font-size: 24px;
+                color: @prescription-primary;
+            }
+
+            .attachment-details {
+                flex: 1;
+
+                .attachment-name {
+                    font-weight: 600;
+                    color: @prescription-text;
+                    margin-bottom: 3px;
+                }
+
+                .attachment-meta {
+                    font-size: 12px;
+                    color: @prescription-text-light;
+                }
+            }
+
+            .attachment-actions a {
+                color: @prescription-primary;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    // Edit button
+    .btn-edit-prescription {
+        margin-top: @prescription-gap-md;
+        padding: @prescription-gap-sm @prescription-gap-lg;
+        background: transparent;
+        border: 1px solid @prescription-primary;
+        border-radius: @prescription-radius-sm;
+        color: @prescription-primary;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all @prescription-transition-fast;
+
+        &:hover {
+            background: @prescription-primary;
+            color: #fff;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: @prescription-bp-mobile) {
+    .prescription-configuration-section {
+        .prescription-details {
+            .eye-data ul li {
+                font-size: 12px;
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ * @license   Proprietary
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <!-- Critical JS: Synchronous -->
+        <script src="Powerline_PrescripcionModule::js/configurator.js" defer="false"/>
+        <script src="Powerline_PrescripcionModule::js/validation.js" defer="false"/>
+        
+        <!-- Non-critical JS: Deferred -->
+        <script src="Powerline_PrescripcionModule::js/visualizer.js" defer="true"/>
+        <script src="Powerline_PrescripcionModule::js/summary-editor.js" defer="true"/>
+        <script src="Powerline_PrescripcionModule::js/ga4-datalayer.js" defer="true"/>
+    </head>
+</page>

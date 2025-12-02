@@ -1,0 +1,263 @@
+// Customer Prescription View - Detail Page
+// Single prescription details in customer account
+
+.prescription-customer-view {
+    margin: @prescription-gap-xl 0;
+
+    // Back button
+    .actions-toolbar {
+        margin-bottom: @prescription-gap-xl;
+
+        .action.back {
+            display: inline-flex;
+            align-items: center;
+            gap: @prescription-gap-xs;
+            padding: @prescription-gap-sm @prescription-gap-md;
+            background: transparent;
+            border: 1px solid @prescription-border-dark;
+            border-radius: @prescription-radius-sm;
+            color: @prescription-text;
+            text-decoration: none;
+            transition: all @prescription-transition-fast;
+
+            &:hover {
+                background: @prescription-bg-light;
+            }
+        }
+    }
+
+    // Content blocks
+    .block {
+        margin-bottom: @prescription-gap-xxl;
+        border: 1px solid #ccc;
+        padding: @prescription-gap-xl;
+        background: #fff;
+        border-radius: @prescription-radius-sm;
+
+        .block-title {
+            margin-bottom: @prescription-gap-lg;
+            padding-bottom: @prescription-gap-md;
+            border-bottom: 2px solid @prescription-primary;
+
+            strong {
+                font-size: 18px;
+                color: @prescription-primary;
+                font-weight: 600;
+            }
+        }
+
+        // Definition list
+        .box dl {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: @prescription-gap-md;
+            margin: 0;
+
+            dt {
+                font-weight: 600;
+                color: @prescription-text-light;
+            }
+
+            dd {
+                margin: 0;
+                color: @prescription-text;
+            }
+        }
+    }
+
+    // Prescription values table
+    .prescription-values-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: @prescription-gap-lg 0;
+
+        th,
+        td {
+            padding: @prescription-gap-md;
+            text-align: center;
+            border: 1px solid @prescription-border-light;
+        }
+
+        thead th {
+            background-color: @prescription-bg-light;
+            font-weight: 600;
+            color: @prescription-text;
+        }
+
+        tbody td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background-color: @prescription-bg-lighter;
+        }
+
+        tbody tr:hover {
+            background-color: lighten(@prescription-bg-light, 3%);
+        }
+    }
+
+    // Empty state
+    .empty-message {
+        padding: @prescription-gap-xl;
+        text-align: center;
+        background: @prescription-bg-light;
+        border-radius: @prescription-radius-sm;
+        color: @prescription-text-light;
+    }
+
+    // Lens information
+    .lens-information-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            padding: @prescription-gap-sm 0;
+            border-bottom: 1px solid @prescription-border;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            strong {
+                display: inline-block;
+                min-width: 150px;
+                font-weight: 600;
+                color: @prescription-text-light;
+            }
+
+            span {
+                color: @prescription-text;
+            }
+        }
+    }
+
+    // Treatments list
+    .treatments-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: @prescription-gap-sm;
+        margin: @prescription-gap-md 0;
+
+        .treatment-badge {
+            padding: @prescription-gap-sm @prescription-gap-md;
+            background: @prescription-primary;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+    }
+
+    // Prescription file attachment
+    .attachment-box {
+        display: flex;
+        align-items: center;
+        gap: @prescription-gap-lg;
+        padding: @prescription-gap-lg;
+        background: @prescription-bg-lighter;
+        border: 1px solid @prescription-border;
+        border-radius: @prescription-radius-sm;
+        margin: @prescription-gap-md 0;
+
+        .attachment-icon {
+            font-size: 48px;
+            color: @prescription-primary;
+        }
+
+        .attachment-info {
+            flex: 1;
+
+            dl {
+                display: grid;
+                grid-template-columns: 120px 1fr;
+                gap: @prescription-gap-sm;
+                margin: 0;
+
+                dt {
+                    font-weight: 600;
+                    color: @prescription-text-light;
+                }
+
+                dd {
+                    margin: 0;
+                    color: @prescription-text;
+                }
+            }
+        }
+
+        .attachment-action {
+            .action.download {
+                display: inline-flex;
+                align-items: center;
+                gap: @prescription-gap-xs;
+                padding: @prescription-gap-md @prescription-gap-lg;
+                background: @prescription-primary;
+                color: #fff;
+                border-radius: @prescription-radius-sm;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all @prescription-transition-fast;
+
+                &:hover {
+                    background: darken(@prescription-primary, 10%);
+                }
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: @prescription-bp-tablet) {
+    .prescription-customer-view {
+        .block .box dl {
+            grid-template-columns: 150px 1fr;
+        }
+
+        .prescription-values-table {
+            font-size: 13px;
+
+            th,
+            td {
+                padding: @prescription-gap-sm;
+            }
+        }
+    }
+}
+
+@media (max-width: @prescription-bp-mobile) {
+    .prescription-customer-view {
+        .block {
+            padding: @prescription-gap-lg;
+
+            .box dl {
+                grid-template-columns: 1fr;
+                gap: @prescription-gap-xs;
+
+                dd {
+                    margin-bottom: @prescription-gap-md;
+                }
+            }
+        }
+
+        .prescription-values-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .attachment-box {
+            flex-direction: column;
+            text-align: center;
+
+            .attachment-info dl {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .lens-information-list li strong {
+            display: block;
+            margin-bottom: @prescription-gap-xs;
+        }
+    }
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Customer Prescription History Layout
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+        <referenceBlock name="page.main.title">
+            <action method="setPageTitle">
+                <argument translate="true" name="title" xsi:type="string">My Prescription Lenses</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Powerline\PrescripcionModule\Block\Customer\History"
+                   name="customer.prescription.history"
+                   template="Powerline_PrescripcionModule::customer/history.phtml"
+                   cacheable="false"/>
+        </referenceContainer>
+    </body>
+</page>

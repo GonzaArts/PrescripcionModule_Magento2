@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Checkout Cart Layout
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.cart.item.renderers">
+            <!-- Custom renderer para productos simples con configuración de prescripción -->
+            <block class="Powerline\PrescripcionModule\Block\Cart\Renderer\CartItemRenderer"
+                   name="checkout.cart.item.renderers.simple"
+                   as="simple"
+                   template="Powerline_PrescripcionModule::cart/item/renderer.phtml">
+                <arguments>
+                    <argument name="product_type" xsi:type="string">simple</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

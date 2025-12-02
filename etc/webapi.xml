@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Web API Configuration
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    
+    <!-- Calculate Price Quote -->
+    <route url="/V1/presc/price" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\PricingServiceInterface" method="quote"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="config" force="true">%body%</parameter>
+        </data>
+    </route>
+    
+    <!-- Validate Prescription Configuration -->
+    <route url="/V1/presc/validate" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\ValidationServiceInterface" method="validate"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="config" force="true">%body%</parameter>
+        </data>
+    </route>
+    
+    <!-- Validate Prescription Data Only -->
+    <route url="/V1/presc/validate/prescription" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\ValidationServiceInterface" method="validatePrescription"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="prescriptionData" force="true">%body%</parameter>
+        </data>
+    </route>
+    
+    <!-- Validate Lens Compatibility -->
+    <route url="/V1/presc/validate/lens" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\ValidationServiceInterface" method="validateLensCompatibility"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="config" force="true">%body%</parameter>
+        </data>
+    </route>
+    
+    <!-- Get Base Lens Price -->
+    <route url="/V1/presc/price/base" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\PricingServiceInterface" method="getBaseLensPrice"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    
+    <!-- Calculate Range Surcharge -->
+    <route url="/V1/presc/price/surcharge" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\PricingServiceInterface" method="calculateRangeSurcharge"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    
+    <!-- Calculate Treatments Cost -->
+    <route url="/V1/presc/price/treatments" method="POST">
+        <service class="Powerline\PrescripcionModule\Api\PricingServiceInterface" method="calculateTreatmentsCost"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    
+</routes>

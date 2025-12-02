@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Checkout Cart Page Layout Override
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Override del renderer para productos simples -->
+        <referenceBlock name="checkout.cart.item.renderers.simple">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Powerline_PrescripcionModule::cart/item/renderer.phtml</argument>
+            </action>
+        </referenceBlock>
+    </body>
+</page>

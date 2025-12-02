@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Database Schema
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    
+    <!-- Tabla de tarifas base por lente -->
+    <table name="pl_price_table" resource="default" engine="innodb" comment="Prescription Lens Base Price Table">
+        <column xsi:type="int" name="price_id" unsigned="true" nullable="false" identity="true" comment="Price ID"/>
+        <column xsi:type="varchar" name="sku_mask" nullable="false" length="255" comment="SKU Mask Pattern"/>
+        <column xsi:type="varchar" name="material" nullable="false" length="100" comment="Lens Material"/>
+        <column xsi:type="varchar" name="design" nullable="false" length="100" comment="Lens Design"/>
+        <column xsi:type="decimal" name="sph_min" scale="2" precision="5" nullable="true" comment="Min Sphere"/>
+        <column xsi:type="decimal" name="sph_max" scale="2" precision="5" nullable="true" comment="Max Sphere"/>
+        <column xsi:type="decimal" name="cyl_min" scale="2" precision="5" nullable="true" comment="Min Cylinder"/>
+        <column xsi:type="decimal" name="cyl_max" scale="2" precision="5" nullable="true" comment="Max Cylinder"/>
+        <column xsi:type="decimal" name="add_min" scale="2" precision="5" nullable="true" comment="Min Addition"/>
+        <column xsi:type="decimal" name="add_max" scale="2" precision="5" nullable="true" comment="Max Addition"/>
+        <column xsi:type="decimal" name="base_price" scale="4" precision="12" nullable="false" comment="Base Price (pair)"/>
+        <column xsi:type="varchar" name="price_mode" nullable="false" length="20" default="fixed" comment="Price Mode (fixed|percentage)"/>
+        <column xsi:type="int" name="tax_class_id" unsigned="true" nullable="true" comment="Tax Class ID"/>
+        <column xsi:type="smallint" name="active" unsigned="true" nullable="false" default="1" comment="Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="price_id"/>
+        </constraint>
+        <index referenceId="PL_PRICE_TABLE_MATERIAL_DESIGN" indexType="btree">
+            <column name="material"/>
+            <column name="design"/>
+        </index>
+        <index referenceId="PL_PRICE_TABLE_SKU_MASK" indexType="btree">
+            <column name="sku_mask"/>
+        </index>
+        <index referenceId="PL_PRICE_TABLE_ACTIVE" indexType="btree">
+            <column name="active"/>
+        </index>
+    </table>
+
+    <!-- Tabla de tratamientos y suplementos -->
+    <table name="pl_treatment" resource="default" engine="innodb" comment="Prescription Lens Treatments">
+        <column xsi:type="int" name="treatment_id" unsigned="true" nullable="false" identity="true" comment="Treatment ID"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="100" comment="Treatment Code"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Treatment Name"/>
+        <column xsi:type="varchar" name="type" nullable="false" length="50" comment="Treatment Type (ar|photo|blue|polar|tint|other)"/>
+        <column xsi:type="decimal" name="price_addition" scale="4" precision="12" nullable="false" default="0" comment="Price Addition"/>
+        <column xsi:type="varchar" name="price_type" nullable="false" length="20" default="fixed" comment="Price Type (fixed|percentage)"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="text" name="compat_rules" nullable="true" comment="Compatibility Rules (JSON)"/>
+        <column xsi:type="smallint" name="active" unsigned="true" nullable="false" default="1" comment="Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="treatment_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="PL_TREATMENT_CODE">
+            <column name="code"/>
+        </constraint>
+        <index referenceId="PL_TREATMENT_TYPE" indexType="btree">
+            <column name="type"/>
+        </index>
+        <index referenceId="PL_TREATMENT_ACTIVE" indexType="btree">
+            <column name="active"/>
+        </index>
+    </table>
+
+    <!-- Tabla de reglas (condiciones/acciones) -->
+    <table name="pl_rules" resource="default" engine="innodb" comment="Prescription Business Rules">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="true" comment="Rule ID"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Rule Name"/>
+        <column xsi:type="varchar" name="rule_type" nullable="false" length="50" comment="Rule Type (hide|surcharge|message|validation)"/>
+        <column xsi:type="text" name="conditions" nullable="true" comment="Conditions (JSON)"/>
+        <column xsi:type="text" name="actions" nullable="true" comment="Actions (JSON)"/>
+        <column xsi:type="int" name="priority" unsigned="true" nullable="false" default="0" comment="Priority"/>
+        <column xsi:type="smallint" name="active" unsigned="true" nullable="false" default="1" comment="Active"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+        </constraint>
+        <index referenceId="PL_RULES_TYPE_ACTIVE" indexType="btree">
+            <column name="rule_type"/>
+            <column name="active"/>
+        </index>
+        <index referenceId="PL_RULES_PRIORITY" indexType="btree">
+            <column name="priority"/>
+        </index>
+    </table>
+
+    <!-- Tabla de adjuntos (recetas subidas) -->
+    <table name="pl_attachment" resource="default" engine="innodb" comment="Prescription Attachments">
+        <column xsi:type="int" name="attachment_id" unsigned="true" nullable="false" identity="true" comment="Attachment ID"/>
+        <column xsi:type="varchar" name="hash" nullable="false" length="64" comment="File Hash (SHA256)"/>
+        <column xsi:type="varchar" name="filename" nullable="false" length="255" comment="Original Filename"/>
+        <column xsi:type="varchar" name="filepath" nullable="false" length="500" comment="Storage Filepath"/>
+        <column xsi:type="varchar" name="mime_type" nullable="false" length="100" comment="MIME Type"/>
+        <column xsi:type="int" name="file_size" unsigned="true" nullable="false" comment="File Size (bytes)"/>
+        <column xsi:type="int" name="quote_id" unsigned="true" nullable="true" comment="Quote ID"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="true" comment="Order ID"/>
+        <column xsi:type="int" name="quote_item_id" unsigned="true" nullable="true" comment="Quote Item ID"/>
+        <column xsi:type="int" name="order_item_id" unsigned="true" nullable="true" comment="Order Item ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" comment="Customer ID"/>
+        <column xsi:type="timestamp" name="retention_until" nullable="true" comment="Retention Until Date"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="attachment_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="PL_ATTACHMENT_HASH">
+            <column name="hash"/>
+        </constraint>
+        <index referenceId="PL_ATTACHMENT_QUOTE_ID" indexType="btree">
+            <column name="quote_id"/>
+        </index>
+        <index referenceId="PL_ATTACHMENT_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+        <index referenceId="PL_ATTACHMENT_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="PL_ATTACHMENT_RETENTION" indexType="btree">
+            <column name="retention_until"/>
+        </index>
+    </table>
+
+    <!-- Tabla de auditoría/logs -->
+    <table name="pl_log_event" resource="default" engine="innodb" comment="Prescription Event Log">
+        <column xsi:type="int" name="log_id" unsigned="true" nullable="false" identity="true" comment="Log ID"/>
+        <column xsi:type="varchar" name="level" nullable="false" length="20" comment="Log Level (info|warning|error)"/>
+        <column xsi:type="varchar" name="event_type" nullable="false" length="100" comment="Event Type"/>
+        <column xsi:type="text" name="message" nullable="false" comment="Log Message"/>
+        <column xsi:type="text" name="context" nullable="true" comment="Context Data (JSON)"/>
+        <column xsi:type="int" name="user_id" unsigned="true" nullable="true" comment="User ID"/>
+        <column xsi:type="varchar" name="ip_address" nullable="true" length="45" comment="IP Address"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="log_id"/>
+        </constraint>
+        <index referenceId="PL_LOG_EVENT_LEVEL" indexType="btree">
+            <column name="level"/>
+        </index>
+        <index referenceId="PL_LOG_EVENT_TYPE" indexType="btree">
+            <column name="event_type"/>
+        </index>
+        <index referenceId="PL_LOG_EVENT_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+    </table>
+</schema>

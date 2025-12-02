@@ -1,0 +1,23 @@
+<?php
+/**
+ * JavaScript initialization template for Prescription Configurator
+ *
+ * @var \Powerline\PrescripcionModule\Block\Configurator $block
+ */
+?>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Powerline_PrescripcionModule/js/configurator": {
+            "endpoints": <?= $block->getEndpointsConfig() ?>,
+            "config": <?= $block->getConfiguratorConfig() ?>,
+            "isEditMode": <?= $block->isEditMode() ? 'true' : 'false' ?>,
+            "editItemId": <?= $block->getEditItemId() ?>
+            <?php if ($block->getExistingConfiguration()): ?>
+            ,
+            "existingConfiguration": <?= $block->getExistingConfiguration() ?>
+            <?php endif; ?>
+        }
+    }
+}
+</script>

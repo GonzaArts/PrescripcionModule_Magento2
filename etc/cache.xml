@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ * @license   Proprietary
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
+    <type name="powerline_prescription_pricing" translate="label,description" instance="Powerline\PrescripcionModule\Model\Cache\Type\PricingCache">
+        <label>Prescription Pricing</label>
+        <description>Cache for prescription lens pricing calculations</description>
+    </type>
+</config>

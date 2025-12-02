@@ -1,0 +1,89 @@
+<?php
+/**
+ * @var \Powerline\PrescripcionModule\Block\Adminhtml\Order\View\PrescriptionInfo $block
+ */
+?>
+
+<?php if ($block->hasPrescriptionItems()): ?>
+<section class="admin__page-section prescription-info-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Prescription Information')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <?php foreach ($block->getPrescriptionItems() as $itemData): ?>
+            <?php 
+                $item = $itemData['item'];
+                $prescription = $itemData['prescription'];
+                $formattedData = $block->formatPrescriptionForDisplay($prescription);
+            ?>
+            <div class="prescription-item" style="margin-bottom: 30px; padding: 15px; border: 1px solid #ddd; background: #f9f9f9;">
+                <h3 style="margin-top: 0;">
+                    <?= $block->escapeHtml($item->getName()) ?>
+                    <span style="color: #666; font-size: 0.9em;">(SKU: <?= $block->escapeHtml($item->getSku()) ?>)</span>
+                </h3>
+
+                <!-- Prescription Data (vista legible) -->
+                <?php if (!empty($formattedData)): ?>
+                <div class="prescription-summary" style="margin-bottom: 20px;">
+                    <table class="admin__table-secondary">
+                        <tbody>
+                            <?php foreach ($formattedData as $label => $value): ?>
+                            <tr>
+                                <td style="font-weight: bold; width: 200px; padding: 8px;">
+                                    <?= $block->escapeHtml($label) ?>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <?= $block->escapeHtml($value) ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endif; ?>
+
+                <!-- Prescripción detallada (JSON) -->
+                <div class="prescription-details">
+                    <strong><?= $block->escapeHtml(__('Complete Prescription Data:')) ?></strong>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #1979c3; font-weight: bold;">
+                            <?= $block->escapeHtml(__('Show JSON Data')) ?>
+                        </summary>
+                        <pre style="background: #fff; padding: 15px; border: 1px solid #ddd; overflow: auto; max-height: 400px; margin-top: 10px; font-size: 12px;"><?= $block->escapeHtml(json_encode($prescription, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) ?></pre>
+                    </details>
+                </div>
+
+                <!-- Archivo adjunto - PRÓXIMAMENTE -->
+                <div class="prescription-attachment" style="margin-top: 15px; padding: 15px; background: #e3f2fd; border: 1px solid #1976d2; border-radius: 4px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 24px;">🔒</span>
+                        <div>
+                            <strong style="color: #1565c0;"><?= $block->escapeHtml(__('Prescription File Upload')) ?></strong>
+                            <div style="margin-top: 5px; color: #1565c0; font-size: 0.95em;">
+                                <?= $block->escapeHtml(__('Funcionalidad próximamente disponible')) ?>
+                            </div>
+                            <div style="margin-top: 3px; color: #666; font-size: 0.85em; font-style: italic;">
+                                <?= $block->escapeHtml(__('Los clientes podrán subir sus recetas en JPG, PNG o PDF')) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<style>
+.prescription-info-section {
+    margin-bottom: 20px;
+}
+.prescription-item h3 {
+    color: #333;
+    border-bottom: 2px solid #1979c3;
+    padding-bottom: 10px;
+}
+.admin__table-secondary tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+</style>
+<?php endif; ?>

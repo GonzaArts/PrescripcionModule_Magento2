@@ -1,0 +1,122 @@
+{
+    "pl_price_table": {
+        "column": {
+            "price_id": true,
+            "sku_mask": true,
+            "material": true,
+            "design": true,
+            "sph_min": true,
+            "sph_max": true,
+            "cyl_min": true,
+            "cyl_max": true,
+            "add_min": true,
+            "add_max": true,
+            "base_price": true,
+            "price_mode": true,
+            "tax_class_id": true,
+            "active": true,
+            "sort_order": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "PL_PRICE_TABLE_MATERIAL_DESIGN": true,
+            "PL_PRICE_TABLE_SKU_MASK": true,
+            "PL_PRICE_TABLE_ACTIVE": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "pl_treatment": {
+        "column": {
+            "treatment_id": true,
+            "code": true,
+            "name": true,
+            "type": true,
+            "price_addition": true,
+            "price_type": true,
+            "description": true,
+            "compat_rules": true,
+            "active": true,
+            "sort_order": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "PL_TREATMENT_TYPE": true,
+            "PL_TREATMENT_ACTIVE": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PL_TREATMENT_CODE": true
+        }
+    },
+    "pl_rules": {
+        "column": {
+            "rule_id": true,
+            "name": true,
+            "rule_type": true,
+            "conditions": true,
+            "actions": true,
+            "priority": true,
+            "active": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "PL_RULES_TYPE_ACTIVE": true,
+            "PL_RULES_PRIORITY": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "pl_attachment": {
+        "column": {
+            "attachment_id": true,
+            "hash": true,
+            "filename": true,
+            "filepath": true,
+            "mime_type": true,
+            "file_size": true,
+            "quote_id": true,
+            "order_id": true,
+            "quote_item_id": true,
+            "order_item_id": true,
+            "customer_id": true,
+            "retention_until": true,
+            "created_at": true
+        },
+        "index": {
+            "PL_ATTACHMENT_QUOTE_ID": true,
+            "PL_ATTACHMENT_ORDER_ID": true,
+            "PL_ATTACHMENT_CUSTOMER_ID": true,
+            "PL_ATTACHMENT_RETENTION": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PL_ATTACHMENT_HASH": true
+        }
+    },
+    "pl_log_event": {
+        "column": {
+            "log_id": true,
+            "level": true,
+            "event_type": true,
+            "message": true,
+            "context": true,
+            "user_id": true,
+            "ip_address": true,
+            "created_at": true
+        },
+        "index": {
+            "PL_LOG_EVENT_LEVEL": true,
+            "PL_LOG_EVENT_TYPE": true,
+            "PL_LOG_EVENT_CREATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

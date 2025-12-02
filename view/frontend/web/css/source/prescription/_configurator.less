@@ -1,0 +1,263 @@
+// Prescription Configurator Styles
+// Multi-step configurator component
+
+.powerline-configurator {
+    margin: @prescription-gap-xl 0;
+    padding: @prescription-gap-xl;
+    border: 1px solid @prescription-border;
+    border-radius: @prescription-radius-md;
+    background: #fff;
+
+    // Progress indicator
+    .progress-indicator {
+        margin-bottom: @prescription-gap-xl;
+        
+        .step-list {
+            display: flex;
+            justify-content: space-between;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 @prescription-gap-md 0;
+
+            .step-item {
+                flex: 1;
+                text-align: center;
+                position: relative;
+                cursor: pointer;
+
+                &:not(:last-child)::after {
+                    content: '';
+                    position: absolute;
+                    top: 15px;
+                    right: -50%;
+                    width: 100%;
+                    height: 2px;
+                    background: @prescription-border;
+                    z-index: 0;
+                }
+
+                .step-number {
+                    display: inline-block;
+                    width: 32px;
+                    height: 32px;
+                    line-height: 32px;
+                    border-radius: 50%;
+                    background: @prescription-bg-light;
+                    color: @prescription-text-light;
+                    font-weight: 600;
+                    margin-bottom: @prescription-gap-xs;
+                    position: relative;
+                    z-index: 1;
+                    transition: all @prescription-transition-normal;
+                }
+
+                .step-label {
+                    display: block;
+                    font-size: 12px;
+                    color: @prescription-text-light;
+                    transition: color @prescription-transition-normal;
+                }
+
+                &.active {
+                    .step-number {
+                        background: @prescription-primary;
+                        color: #fff;
+                    }
+                    .step-label {
+                        color: @prescription-primary;
+                        font-weight: 600;
+                    }
+                }
+
+                &.completed {
+                    .step-number {
+                        background: @prescription-success;
+                        color: #fff;
+                    }
+                    .step-label {
+                        color: @prescription-text;
+                    }
+                }
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: @prescription-bg-light;
+            border-radius: 3px;
+            overflow: hidden;
+
+            .progress-fill {
+                height: 100%;
+                background: @prescription-primary;
+                transition: width 0.5s ease;
+            }
+        }
+    }
+
+    // Step content
+    .step-container {
+        min-height: 400px;
+        margin-bottom: @prescription-gap-xl;
+
+        .step-content {
+            display: none;
+
+            &.active {
+                display: block;
+                animation: fadeIn @prescription-transition-normal;
+            }
+
+            h2 {
+                margin-bottom: @prescription-gap-lg;
+                color: @prescription-primary;
+                font-size: 24px;
+            }
+        }
+    }
+
+    // Navigation buttons
+    .step-navigation {
+        display: flex;
+        justify-content: space-between;
+        gap: @prescription-gap-md;
+        padding-top: @prescription-gap-lg;
+        border-top: 1px solid @prescription-border;
+
+        button {
+            padding: 12px 24px;
+            border-radius: @prescription-radius-sm;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all @prescription-transition-fast;
+
+            &.btn-prev {
+                display: none;
+            }
+
+            &.btn-add-to-cart {
+                display: none;
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    // Price sidebar
+    .price-sidebar {
+        margin-top: @prescription-gap-xl;
+        padding: @prescription-gap-lg;
+        background: @prescription-bg-lighter;
+        border: 1px solid @prescription-border;
+        border-radius: @prescription-radius-sm;
+
+        h3 {
+            margin: 0 0 @prescription-gap-lg 0;
+            color: @prescription-text;
+            font-size: 18px;
+        }
+
+        .price-loading {
+            display: none;
+            text-align: center;
+            padding: @prescription-gap-xl 0;
+            color: @prescription-text-light;
+        }
+
+        .price-breakdown {
+            .price-line {
+                display: flex;
+                justify-content: space-between;
+                padding: @prescription-gap-sm 0;
+                border-bottom: 1px solid @prescription-border;
+
+                &.subtotal,
+                &.total {
+                    padding-top: @prescription-gap-md;
+                    margin-top: @prescription-gap-sm;
+                    border-top: 2px solid @prescription-border-dark;
+                    font-weight: 600;
+                }
+
+                &.total {
+                    font-size: 18px;
+                    color: @prescription-primary;
+                }
+
+                .label {
+                    color: @prescription-text-light;
+                }
+
+                .value {
+                    color: @prescription-text;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .price-note {
+            margin-top: @prescription-gap-lg;
+            padding-top: @prescription-gap-lg;
+            border-top: 1px solid @prescription-border;
+            font-size: 12px;
+            color: @prescription-text-light;
+            text-align: center;
+        }
+    }
+
+    // Validation messages
+    .validation-messages {
+        display: none;
+        margin-top: @prescription-gap-lg;
+        padding: @prescription-gap-md @prescription-gap-lg;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: @prescription-radius-sm;
+        color: #856404;
+
+        &.visible {
+            display: block;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: @prescription-gap-xl;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Responsive
+@media (max-width: @prescription-bp-mobile) {
+    .powerline-configurator {
+        padding: @prescription-gap-md;
+
+        .progress-indicator .step-list .step-item {
+            .step-label {
+                font-size: 10px;
+            }
+        }
+
+        .step-navigation {
+            flex-direction: column;
+
+            button {
+                width: 100%;
+            }
+        }
+    }
+}

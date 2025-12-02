@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Dependency Injection
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    
+    <!-- Logger configuration -->
+    <type name="Powerline\PrescripcionModule\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    
+    <type name="Powerline\PrescripcionModule\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">powerline_presc</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Powerline\PrescripcionModule\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+    
+    <!-- Service Contracts Preferences -->
+    <preference for="Powerline\PrescripcionModule\Api\PricingServiceInterface"
+                type="Powerline\PrescripcionModule\Service\PricingService"/>
+    
+    <preference for="Powerline\PrescripcionModule\Api\ValidationServiceInterface"
+                type="Powerline\PrescripcionModule\Service\ValidationService"/>
+    
+    <preference for="Powerline\PrescripcionModule\Api\Data\ConfigDtoInterface"
+                type="Powerline\PrescripcionModule\Model\Data\ConfigDto"/>
+    
+    <preference for="Powerline\PrescripcionModule\Api\Data\PriceBreakdownDtoInterface"
+                type="Powerline\PrescripcionModule\Model\Data\PriceBreakdownDto"/>
+    
+    <preference for="Powerline\PrescripcionModule\Api\Data\ValidationResultDtoInterface"
+                type="Powerline\PrescripcionModule\Model\Data\ValidationResultDto"/>
+    
+    <!-- Attachment Management Service -->
+    <preference for="Powerline\PrescripcionModule\Api\AttachmentManagementInterface"
+                type="Powerline\PrescripcionModule\Service\AttachmentManagement"/>
+    
+    <!-- Attachment Repository -->
+    <preference for="Powerline\PrescripcionModule\Api\AttachmentRepositoryInterface"
+                type="Powerline\PrescripcionModule\Model\AttachmentRepository"/>
+    
+    <preference for="Powerline\PrescripcionModule\Api\Data\AttachmentInterface"
+                type="Powerline\PrescripcionModule\Model\Attachment"/>
+    
+    <!-- Pricing Service Configuration -->
+    <type name="Powerline\PrescripcionModule\Service\PricingService">
+        <arguments>
+            <argument name="frameResolver" xsi:type="object">Powerline\PrescripcionModule\Service\Pricing\FrameResolver</argument>
+        </arguments>
+    </type>
+    
+    <!-- Frame Resolver Configuration -->
+    <type name="Powerline\PrescripcionModule\Service\Pricing\FrameResolver">
+        <arguments>
+            <argument name="productRepository" xsi:type="object">Magento\Catalog\Api\ProductRepositoryInterface</argument>
+        </arguments>
+    </type>
+    
+    <!-- Plugins -->
+    <!-- Plugin para procesar configuración de prescripción en addProduct() -->
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="powerline_presc_cart_item_processor"
+                type="Powerline\PrescripcionModule\Plugin\Quote\CartItemProcessorPlugin"
+                sortOrder="10"
+                disabled="false"/>
+    </type>
+    
+</config>

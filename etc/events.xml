@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Events Configuration
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <!-- Transferir datos de prescripción del Quote al Order -->
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="powerline_presc_save_to_order" 
+                  instance="Powerline\PrescripcionModule\Observer\SavePrescriptionDataToOrder"/>
+    </event>
+
+</config>

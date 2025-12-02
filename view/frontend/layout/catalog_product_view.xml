@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Product View Layout
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Reemplazar ambos bloques con nuestra plantilla, igual que IPrescription -->
+        <referenceBlock name="product.info.addtocart" 
+                        class="Powerline\PrescripcionModule\Block\Product\View\Prescription" 
+                        template="Powerline_PrescripcionModule::product/view/prescription.phtml"/>
+        <referenceBlock name="product.info.addtocart.additional" 
+                        class="Powerline\PrescripcionModule\Block\Product\View\Prescription" 
+                        template="Powerline_PrescripcionModule::product/view/prescription.phtml"/>
+    </body>
+</page>

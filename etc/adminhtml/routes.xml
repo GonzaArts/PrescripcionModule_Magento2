@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Admin Routes
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="presc_admin" frontName="presc_admin">
+            <module name="Powerline_PrescripcionModule" before="Magento_Backend"/>
+        </route>
+    </router>
+</config>

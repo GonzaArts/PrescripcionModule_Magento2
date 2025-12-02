@@ -1,0 +1,403 @@
+<?php
+/**
+ * @var \Powerline\PrescripcionModule\Block\Cart\Renderer\CartItemRenderer $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+?>
+
+<?php $_item = $block->getItem(); ?>
+
+<?php /* Render estándar del item */ ?>
+<tbody class="cart item">
+    <tr class="item-info">
+        <td data-th="<?= $escaper->escapeHtmlAttr(__('Item')) ?>" class="col item">
+            <div class="powerline-item-wrapper">
+                <div class="powerline-presc-thumbnail">
+                    <?= $block->getImage($block->getProductForThumbnail(), 'cart_page_product_thumbnail')->toHtml() ?>
+                </div>
+                <div class="product-item-details">
+                    <strong class="product-item-name">
+                        <?= $escaper->escapeHtml($block->getProductName()) ?>
+                    </strong>
+
+                    <?php /* Opciones de configuración del configurador - diseño simple */ ?>
+                    <?php $configOptions = $block->getConfigurationOptions(); ?>
+                    <?php if (!empty($configOptions)): ?>
+                        <div class="powerline-presc-config-simple">
+                            <?php foreach ($configOptions as $option): ?>
+                                <div class="config-line">
+                                    <span class="config-label"><?= $escaper->escapeHtml($option['label']) ?>:</span>
+                                    <span class="config-value"><?= $escaper->escapeHtml($option['value']) ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </td>
+
+        <td class="col price" data-th="<?= $escaper->escapeHtmlAttr(__('Price')) ?>">
+            <?= $block->getUnitPriceHtml($_item) ?>
+        </td>
+
+        <td class="col qty" data-th="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>">
+            <div class="field qty">
+                <label class="label" for="cart-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>-qty">
+                    <span class="screen-reader-text"><?= $escaper->escapeHtml(__('Qty')) ?></span>
+                </label>
+                <div class="powerline-qty-wrapper">
+                    <button type="button" class="qty-btn qty-minus" 
+                            onclick="var input = this.nextElementSibling; if(input.value > 1) input.value = parseInt(input.value) - 1;">
+                        <span>−</span>
+                    </button>
+                    <input id="cart-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>-qty"
+                           name="cart[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>][qty]"
+                           data-cart-item-id="<?= $escaper->escapeHtmlAttr($_item->getSku()) ?>"
+                           value="<?= $escaper->escapeHtmlAttr($block->getQty()) ?>"
+                           type="number"
+                           size="4"
+                           step="1"
+                           min="1"
+                           title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>"
+                           class="input-text qty"
+                           data-validate="{required:true,'validate-greater-than-zero':true}"
+                           data-role="cart-item-qty"/>
+                    <button type="button" class="qty-btn qty-plus" 
+                            onclick="var input = this.previousElementSibling; input.value = parseInt(input.value) + 1;">
+                        <span>+</span>
+                    </button>
+                </div>
+            </div>
+        </td>
+
+        <td class="col subtotal" data-th="<?= $escaper->escapeHtmlAttr(__('Subtotal')) ?>">
+            <?= $block->getRowTotalHtml($_item) ?>
+        </td>
+
+        <td class="col remove">
+            <button type="button" 
+                    class="powerline-remove-btn" 
+                    title="<?= $escaper->escapeHtmlAttr(__('Remove item')) ?>"
+                    onclick="this.closest('form').querySelector('input[name=\'cart[<?= $escaper->escapeJs($_item->getId()) ?>][qty]\']').value = 0; this.closest('form').submit();">
+                <span>×</span>
+            </button>
+        </td>
+    </tr>
+    <tr class="item-actions">
+        <td colspan="100">
+            <div class="actions-toolbar">
+                <?= $block->getActions($_item) ?>
+            </div>
+        </td>
+    </tr>
+</tbody>
+
+<style>
+/* Layout horizontal: imagen a la izquierda, info a la derecha */
+.powerline-item-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+}
+
+/* Thumbnail: tamaño fijo y compacto */
+.powerline-presc-thumbnail {
+    flex-shrink: 0 !important;
+    width: 80px !important;
+}
+
+.powerline-presc-thumbnail img {
+    max-width: 80px !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    border-radius: 4px !important;
+}
+
+/* Info del producto ocupa el espacio restante */
+.powerline-item-wrapper .product-item-details {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+/* Configuración de prescripción - diseño simple sin fondo */
+.powerline-presc-config-simple {
+    margin-top: 8px !important;
+}
+
+.powerline-presc-config-simple .config-line {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    margin-bottom: 2px !important;
+}
+
+.powerline-presc-config-simple .config-label {
+    font-weight: 600 !important;
+    color: #333 !important;
+}
+
+.powerline-presc-config-simple .config-value {
+    color: #666 !important;
+    margin-left: 4px !important;
+}
+
+/* Botones +/- para cantidad */
+.powerline-qty-wrapper {
+    display: inline-flex !important;
+    align-items: center !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    background: #f9f9f9 !important;
+}
+
+.powerline-qty-wrapper .qty-btn {
+    width: 32px !important;
+    height: 38px !important;
+    border: none !important;
+    background: #fff !important;
+    cursor: pointer !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    color: #333 !important;
+    transition: all 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+.powerline-qty-wrapper .qty-btn:hover {
+    background: #f0f0f0 !important;
+}
+
+.powerline-qty-wrapper .qty-btn:active {
+    background: #e0e0e0 !important;
+}
+
+.powerline-qty-wrapper input.qty {
+    width: 50px !important;
+    height: 38px !important;
+    border: none !important;
+    border-left: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+    -moz-appearance: textfield !important;
+}
+
+.powerline-qty-wrapper input.qty::-webkit-outer-spin-button,
+.powerline-qty-wrapper input.qty::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+/* Botón eliminar (X) en columna final - diseño simple */
+.col.remove {
+    text-align: center !important;
+    vertical-align: middle !important;
+    width: 40px !important;
+}
+
+.powerline-remove-btn {
+    width: 24px !important;
+    height: 24px !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    color: #999 !important;
+    transition: color 0.2s !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+.powerline-remove-btn:hover {
+    color: #333 !important;
+}
+
+.powerline-remove-btn span {
+    display: block !important;
+    line-height: 1 !important;
+}
+
+/* Ocultar label de cantidad visualmente pero mantener para accesibilidad */
+.screen-reader-text {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Sección de detalles de prescripción (colapsable) - para futuro */
+.prescription-configuration-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.prescription-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: #f5f5f5;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    transition: all 0.2s;
+    width: 100%;
+    text-align: left;
+}
+
+.prescription-toggle:hover {
+    background: #ebebeb;
+}
+
+.prescription-toggle .icon-expand {
+    transition: transform 0.3s;
+}
+
+.prescription-toggle.expanded .icon-expand {
+    transform: rotate(180deg);
+}
+
+.prescription-details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s;
+    padding: 0 15px;
+}
+
+.prescription-details.visible {
+    max-height: 1000px;
+    opacity: 1;
+    padding: 15px;
+}
+
+.prescription-values, .use-type-section, .lens-section, .treatments-section, .attachment-section {
+    margin-bottom: 15px;
+}
+
+.prescription-values h5, .use-type-section h5, .lens-section h5, .treatments-section h5, .attachment-section h5 {
+    margin: 0 0 10px 0;
+    color: #1979c3;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.eye-data {
+    padding: 10px;
+    background: #f8f9fa;
+    border-left: 3px solid #1979c3;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.eye-data strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.eye-data ul {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.eye-data ul li {
+    padding: 3px 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.pd-value {
+    padding: 8px 10px;
+    background: #f0f8ff;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.treatments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.treatments-list li {
+    padding: 6px 10px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.attachment-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 15px;
+    background: #fff;
+    border: 1px solid #1979c3;
+    border-radius: 4px;
+    color: #1979c3;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.attachment-link:hover {
+    background: #1979c3;
+    color: #fff;
+}
+
+.prescription-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-edit-prescription {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #1979c3;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-edit-prescription:hover {
+    background: #155a8a;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(25, 121, 195, 0.3);
+}
+
+@media (max-width: 768px) {
+    .treatments-list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

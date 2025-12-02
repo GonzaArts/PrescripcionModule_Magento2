@@ -1,0 +1,321 @@
+<?php
+/**
+ * Powerline PrescripcionModule - Customer Prescription View Template
+ *
+ * @var \Powerline\PrescripcionModule\Block\Customer\View $block
+ */
+
+$orderItem = $block->getOrderItem();
+$order = $block->getOrder();
+$config = $block->getPrescriptionConfig();
+$attachment = $block->getAttachment();
+
+if (!$orderItem || !$order || !$config) {
+    echo '<div class="message message-error error"><div>' . __('Unable to load prescription configuration.') . '</div></div>';
+    return;
+}
+?>
+
+<div class="prescription-customer-view">
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>" class="action back">
+                <span><?= $block->escapeHtml(__('Back to My Prescriptions')) ?></span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Order Information -->
+    <div class="block block-order-info">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('Order Information')) ?></strong>
+        </div>
+        <div class="block-content">
+            <div class="box box-order-info">
+                <dl>
+                    <dt><?= $block->escapeHtml(__('Order #')) ?></dt>
+                    <dd>
+                        <a href="<?= $block->escapeUrl($block->getOrderViewUrl()) ?>">
+                            <?= $block->escapeHtml($order->getIncrementId()) ?>
+                        </a>
+                    </dd>
+
+                    <dt><?= $block->escapeHtml(__('Order Date')) ?></dt>
+                    <dd><?= $block->escapeHtml($block->formatDate($order->getCreatedAt(), \IntlDateFormatter::MEDIUM)) ?></dd>
+
+                    <dt><?= $block->escapeHtml(__('Order Status')) ?></dt>
+                    <dd><?= $block->escapeHtml($order->getStatusLabel()) ?></dd>
+
+                    <dt><?= $block->escapeHtml(__('Product')) ?></dt>
+                    <dd><?= $block->escapeHtml($orderItem->getName()) ?></dd>
+
+                    <dt><?= $block->escapeHtml(__('SKU')) ?></dt>
+                    <dd><?= $block->escapeHtml($orderItem->getSku()) ?></dd>
+
+                    <dt><?= $block->escapeHtml(__('Quantity')) ?></dt>
+                    <dd><?= $block->escapeHtml((int)$orderItem->getQtyOrdered()) ?></dd>
+
+                    <dt><?= $block->escapeHtml(__('Price')) ?></dt>
+                    <dd><?= $block->escapeHtml($order->formatPrice($orderItem->getPrice())) ?></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Values -->
+    <div class="block block-prescription-values">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('Prescription Values')) ?></strong>
+        </div>
+        <div class="block-content">
+            <?php if (isset($config['prescription'])): ?>
+                <div class="table-wrapper">
+                    <table class="data table prescription-values-table">
+                        <thead>
+                            <tr>
+                                <th><?= $block->escapeHtml(__('Eye')) ?></th>
+                                <th><?= $block->escapeHtml(__('SPH')) ?></th>
+                                <th><?= $block->escapeHtml(__('CYL')) ?></th>
+                                <th><?= $block->escapeHtml(__('AXIS')) ?></th>
+                                <th><?= $block->escapeHtml(__('ADD')) ?></th>
+                                <th><?= $block->escapeHtml(__('PD')) ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (isset($config['prescription']['od'])): ?>
+                                <tr>
+                                    <td><strong><?= $block->escapeHtml(__('Right Eye (OD)')) ?></strong></td>
+                                    <td><?= $block->escapeHtml($block->formatPrescriptionValue($config['prescription']['od']['sph'] ?? null)) ?></td>
+                                    <td><?= $block->escapeHtml($block->formatPrescriptionValue($config['prescription']['od']['cyl'] ?? null)) ?></td>
+                                    <td><?= $block->escapeHtml($config['prescription']['od']['axis'] ?? '-') ?></td>
+                                    <td><?= $block->escapeHtml($block->formatPrescriptionValue($config['prescription']['od']['add'] ?? null)) ?></td>
+                                    <td><?= $block->escapeHtml($config['prescription']['od']['pd'] ?? '-') ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if (isset($config['prescription']['oi'])): ?>
+                                <tr>
+                                    <td><strong><?= $block->escapeHtml(__('Left Eye (OI)')) ?></strong></td>
+                                    <td><?= $block->escapeHtml($block->formatPrescriptionValue($config['prescription']['oi']['sph'] ?? null)) ?></td>
+                                    <td><?= $block->escapeHtml($block->formatPrescriptionValue($config['prescription']['oi']['cyl'] ?? null)) ?></td>
+                                    <td><?= $block->escapeHtml($config['prescription']['oi']['axis'] ?? '-') ?></td>
+                                    <td><?= $block->escapeHtml($block->formatPrescriptionValue($config['prescription']['oi']['add'] ?? null)) ?></td>
+                                    <td><?= $block->escapeHtml($config['prescription']['oi']['pd'] ?? '-') ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <p><?= $block->escapeHtml(__('No prescription values available.')) ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Lens Use & Specification -->
+    <div class="block block-lens-info">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('Lens Information')) ?></strong>
+        </div>
+        <div class="block-content">
+            <div class="box box-lens-info">
+                <dl>
+                    <?php if (isset($config['use_type'])): ?>
+                        <dt><?= $block->escapeHtml(__('Lens Use Type')) ?></dt>
+                        <dd><?= $block->escapeHtml($block->getUseTypeLabel($config['use_type'])) ?></dd>
+                    <?php endif; ?>
+
+                    <?php if (isset($config['lens']['material'])): ?>
+                        <dt><?= $block->escapeHtml(__('Material')) ?></dt>
+                        <dd><?= $block->escapeHtml($block->getMaterialLabel($config['lens']['material'])) ?></dd>
+                    <?php endif; ?>
+
+                    <?php if (isset($config['lens']['design'])): ?>
+                        <dt><?= $block->escapeHtml(__('Design')) ?></dt>
+                        <dd><?= $block->escapeHtml($block->getDesignLabel($config['lens']['design'])) ?></dd>
+                    <?php endif; ?>
+
+                    <?php if (isset($config['lens']['index'])): ?>
+                        <dt><?= $block->escapeHtml(__('Refractive Index')) ?></dt>
+                        <dd><?= $block->escapeHtml($config['lens']['index']) ?></dd>
+                    <?php endif; ?>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatments -->
+    <?php if (isset($config['treatments']) && !empty($config['treatments'])): ?>
+        <div class="block block-treatments">
+            <div class="block-title">
+                <strong><?= $block->escapeHtml(__('Treatments')) ?></strong>
+            </div>
+            <div class="block-content">
+                <ul class="treatments-list">
+                    <?php foreach ($block->getTreatmentsList($config['treatments']) as $treatment): ?>
+                        <li><?= $block->escapeHtml($treatment) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Prescription File -->
+    <?php if ($attachment && $attachment->getId()): ?>
+        <div class="block block-attachment">
+            <div class="block-title">
+                <strong><?= $block->escapeHtml(__('Prescription File')) ?></strong>
+            </div>
+            <div class="block-content">
+                <div class="box box-attachment">
+                    <dl>
+                        <dt><?= $block->escapeHtml(__('Filename')) ?></dt>
+                        <dd><?= $block->escapeHtml($attachment->getFilename()) ?></dd>
+
+                        <dt><?= $block->escapeHtml(__('File Size')) ?></dt>
+                        <dd><?= $block->escapeHtml(number_format($attachment->getFileSize() / 1024, 2)) ?> KB</dd>
+
+                        <dt><?= $block->escapeHtml(__('Uploaded')) ?></dt>
+                        <dd><?= $block->escapeHtml($block->formatDate($attachment->getCreatedAt(), \IntlDateFormatter::MEDIUM)) ?></dd>
+                    </dl>
+                    <div class="actions">
+                        <a href="<?= $block->escapeUrl($block->getAttachmentDownloadUrl($attachment->getAttachmentId(), $attachment->getHash())) ?>" 
+                           class="action primary download" 
+                           target="_blank">
+                            <span><?= $block->escapeHtml(__('Download File')) ?></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<style>
+.prescription-customer-view {
+    margin: 20px 0;
+}
+
+.prescription-customer-view .actions-toolbar {
+    margin-bottom: 20px;
+}
+
+.prescription-customer-view .block {
+    margin-bottom: 30px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background: #fff;
+}
+
+.prescription-customer-view .block-title {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1979c3;
+}
+
+.prescription-customer-view .block-title strong {
+    font-size: 18px;
+    color: #1979c3;
+}
+
+.prescription-customer-view .box dl {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 10px;
+    margin: 0;
+}
+
+.prescription-customer-view .box dt {
+    font-weight: 600;
+    color: #666;
+}
+
+.prescription-customer-view .box dd {
+    margin: 0;
+    color: #333;
+}
+
+.prescription-values-table {
+    width: 100%;
+}
+
+.prescription-values-table th,
+.prescription-values-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #e3e3e3;
+}
+
+.prescription-values-table thead th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.prescription-values-table tbody td:first-child {
+    text-align: left;
+    font-weight: 600;
+}
+
+.treatments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.treatments-list li {
+    padding: 8px 12px;
+    background-color: #f0f8ff;
+    border-left: 4px solid #1979c3;
+    border-radius: 3px;
+}
+
+.action.back,
+.action.download {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #1979c3;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.action.back:hover,
+.action.download:hover {
+    background-color: #006bb4;
+}
+
+.action.primary {
+    background-color: #28a745;
+}
+
+.action.primary:hover {
+    background-color: #218838;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .prescription-customer-view .box dl {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .prescription-customer-view .box dt {
+        margin-top: 10px;
+    }
+
+    .prescription-values-table {
+        font-size: 12px;
+    }
+
+    .prescription-values-table th,
+    .prescription-values-table td {
+        padding: 5px;
+    }
+
+    .treatments-list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

@@ -1,0 +1,217 @@
+<?php
+/**
+ * Powerline PrescripcionModule - Customer Prescription History Template
+ *
+ * @var \Powerline\PrescripcionModule\Block\Customer\History $block
+ */
+
+$prescriptionItems = $block->getPrescriptionItems();
+?>
+
+<div class="prescription-history">
+    <div class="block block-prescription-history">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('My Prescription Lenses')) ?></strong>
+        </div>
+        <div class="block-content">
+            <?php if (empty($prescriptionItems)): ?>
+                <div class="message info empty">
+                    <span><?= $block->escapeHtml(__('You have no prescription orders yet.')) ?></span>
+                </div>
+            <?php else: ?>
+                <div class="table-wrapper prescriptions-items">
+                    <table class="data table table-prescription-items" id="my-prescriptions-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col order"><?= $block->escapeHtml(__('Order #')) ?></th>
+                                <th scope="col" class="col date"><?= $block->escapeHtml(__('Date')) ?></th>
+                                <th scope="col" class="col product"><?= $block->escapeHtml(__('Product')) ?></th>
+                                <th scope="col" class="col prescription"><?= $block->escapeHtml(__('Prescription')) ?></th>
+                                <th scope="col" class="col status"><?= $block->escapeHtml(__('Status')) ?></th>
+                                <th scope="col" class="col actions"><?= $block->escapeHtml(__('Actions')) ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($prescriptionItems as $item): ?>
+                                <tr>
+                                    <td data-th="<?= $block->escapeHtmlAttr(__('Order #')) ?>" class="col order">
+                                        <a href="<?= $block->escapeUrl($block->getOrderViewUrl($item['order_id'])) ?>">
+                                            <?= $block->escapeHtml($item['order_increment_id']) ?>
+                                        </a>
+                                    </td>
+                                    <td data-th="<?= $block->escapeHtmlAttr(__('Date')) ?>" class="col date">
+                                        <?= $block->escapeHtml($block->formatDate($item['created_at'], \IntlDateFormatter::MEDIUM)) ?>
+                                    </td>
+                                    <td data-th="<?= $block->escapeHtmlAttr(__('Product')) ?>" class="col product">
+                                        <strong class="product name"><?= $block->escapeHtml($item['product_name']) ?></strong>
+                                        <div class="product-sku"><?= $block->escapeHtml(__('SKU: %1', $item['product_sku'])) ?></div>
+                                    </td>
+                                    <td data-th="<?= $block->escapeHtmlAttr(__('Prescription')) ?>" class="col prescription">
+                                        <span class="prescription-summary"><?= $block->escapeHtml($item['prescription_summary']) ?></span>
+                                    </td>
+                                    <td data-th="<?= $block->escapeHtmlAttr(__('Status')) ?>" class="col status">
+                                        <?= $block->escapeHtml($item['status']) ?>
+                                    </td>
+                                    <td data-th="<?= $block->escapeHtmlAttr(__('Actions')) ?>" class="col actions">
+                                        <a href="<?= $block->escapeUrl($block->getViewUrl($item['item_id'])) ?>" 
+                                           class="action view">
+                                            <span><?= $block->escapeHtml(__('View Details')) ?></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<style>
+.prescription-history {
+    margin: 20px 0;
+}
+
+.block-prescription-history {
+    margin-bottom: 30px;
+}
+
+.block-prescription-history .block-title {
+    padding: 15px 0;
+    border-bottom: 2px solid #1979c3;
+    margin-bottom: 20px;
+}
+
+.block-prescription-history .block-title strong {
+    font-size: 20px;
+    color: #333;
+}
+
+.table-prescription-items {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table-prescription-items thead th {
+    background-color: #f5f5f5;
+    padding: 12px;
+    border: 1px solid #ccc;
+    font-weight: 600;
+    text-align: left;
+}
+
+.table-prescription-items tbody td {
+    padding: 12px;
+    border: 1px solid #e3e3e3;
+    vertical-align: middle;
+}
+
+.table-prescription-items .col.order {
+    width: 12%;
+}
+
+.table-prescription-items .col.date {
+    width: 12%;
+}
+
+.table-prescription-items .col.product {
+    width: 25%;
+}
+
+.table-prescription-items .col.prescription {
+    width: 28%;
+}
+
+.table-prescription-items .col.status {
+    width: 10%;
+}
+
+.table-prescription-items .col.actions {
+    width: 13%;
+}
+
+.table-prescription-items .product-sku {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.table-prescription-items .prescription-summary {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #333;
+}
+
+.table-prescription-items .action {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 2px;
+    background-color: #1979c3;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.table-prescription-items .action:hover {
+    background-color: #006bb4;
+}
+
+.table-prescription-items .action.view {
+    background-color: #1979c3;
+}
+
+.table-prescription-items .action.reorder {
+    background-color: #28a745;
+}
+
+.table-prescription-items .action.reorder:hover {
+    background-color: #218838;
+}
+
+.message.empty {
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f8ff;
+    border: 1px solid #b8daff;
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table-prescription-items thead {
+        display: none;
+    }
+
+    .table-prescription-items tbody tr {
+        display: block;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+    }
+
+    .table-prescription-items tbody td {
+        display: block;
+        text-align: right;
+        border: none;
+        border-bottom: 1px solid #e3e3e3;
+        padding: 10px;
+    }
+
+    .table-prescription-items tbody td:before {
+        content: attr(data-th) ": ";
+        float: left;
+        font-weight: 600;
+    }
+
+    .table-prescription-items tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .table-prescription-items .action {
+        display: block;
+        margin: 5px 0;
+        text-align: center;
+    }
+}
+</style>

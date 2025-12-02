@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - Admin Order View Layout
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Añadir la información de prescripción en el contenido principal -->
+        <referenceContainer name="content">
+            <block class="Powerline\PrescripcionModule\Block\Adminhtml\Order\View\PrescriptionInfo"
+                   name="prescription_info"
+                   template="Powerline_PrescripcionModule::order/view/prescription_info.phtml"
+                   before="order_info"/>
+        </referenceContainer>
+    </body>
+</page>

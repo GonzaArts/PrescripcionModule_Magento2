@@ -1,0 +1,364 @@
+<?php
+/**
+ * Powerline PrescripcionModule
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ * @license   Proprietary
+ *
+ * @var \Powerline\PrescripcionModule\Block\Product\View\Prescription $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+use Magento\Catalog\Api\CategoryRepositoryInterface;
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$registry = $objectManager->get('\Magento\Framework\Registry');
+$currentProduct = $registry->registry('current_product');
+$product = $objectManager->create('Magento\Catalog\Model\Product')->load($currentProduct->getId());
+
+// Check category prescription flag
+$categoryIds = $currentProduct->getCategoryIds();
+$flag = false;
+$categoryRepository = $objectManager->get(CategoryRepositoryInterface::class);
+foreach ($categoryIds as $categoryId) {
+    $category = $categoryRepository->get($categoryId);
+    $attributeValue = $category->getData('has_catiprescription');
+    if($attributeValue == 1) {
+        $flag = true;
+    }
+}
+
+// Check product prescription flag
+$_product = $block->getProduct();
+$flag3 = false;
+$flag_product = $_product->getData('has_prescription');
+if($flag_product == 1) {
+    $flag3 = true;
+}
+
+// Check if product is available and saleable
+$flag1 = ($currentProduct->isAvailable());
+$flag2 = ($currentProduct->isSaleable());
+
+// Verificar categorías deshabilitadas (22 = deportivas, 9 = lentillas)
+$disabledCategories = [22, 9, '22', '9'];
+$isDisabledCategory = false;
+foreach ($disabledCategories as $disabledCatId) {
+    if (in_array($disabledCatId, $categoryIds)) {
+        $isDisabledCategory = true;
+        break;
+    }
+}
+
+// Si NO tiene prescripción o está en categoría deshabilitada, renderizar botón estándar
+if (!$flag3 || !$flag || !$flag1 || !$flag2 || $isDisabledCategory) {
+    ?>
+    <style>
+        #product-addtocart-button { display:block!important; }
+        .box-tocart {
+            margin-top: 20px;
+        }
+        .box-tocart .fieldset {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            margin: 0;
+        }
+        .box-tocart .field.qty {
+            margin: 0;
+        }
+        .box-tocart .field.qty .label {
+            display: none;
+        }
+        .box-tocart .field.qty .control {
+            display: inline-flex;
+            align-items: stretch;
+            border: 1px solid #d1d1d1;
+            border-radius: 3px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .box-tocart .qty-btn {
+            background: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 300;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            padding: 0;
+        }
+        .box-tocart .qty-btn:hover {
+            background: #f5f5f5;
+        }
+        .box-tocart .qty-btn:active {
+            background: #e8e8e8;
+        }
+        .box-tocart .qty-minus {
+            border-right: 1px solid #d1d1d1;
+        }
+        .box-tocart .qty-plus {
+            border-left: 1px solid #d1d1d1;
+        }
+        .box-tocart input#qty {
+            width: 50px;
+            height: 40px;
+            text-align: center;
+            border: none;
+            background: #fff;
+            margin: 0;
+            padding: 0 5px;
+            font-size: 14px;
+            font-weight: 500;
+            -moz-appearance: textfield;
+        }
+        .box-tocart input#qty::-webkit-outer-spin-button,
+        .box-tocart input#qty::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .box-tocart input#qty:focus {
+            outline: none;
+            background: #fafafa;
+        }
+        .box-tocart .actions {
+            margin: 0;
+        }
+        .box-tocart button.tocart {
+            height: 40px;
+            padding: 0 25px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+    </style>
+    <div class="box-tocart">
+        <div class="fieldset">
+            <div class="field qty">
+                <label class="label" for="qty"><span><?= __('Qty') ?></span></label>
+                <div class="control">
+                    <button type="button" class="qty-btn qty-minus" title="<?= __('Decrease Quantity') ?>">
+                        <span>-</span>
+                    </button>
+                    <input type="number" 
+                           name="qty" 
+                           id="qty" 
+                           min="1" 
+                           value="1" 
+                           title="<?= __('Qty') ?>" 
+                           class="input-text qty" 
+                           data-validate="{required:true,'validate-greater-than-zero':true}">
+                    <button type="button" class="qty-btn qty-plus" title="<?= __('Increase Quantity') ?>">
+                        <span>+</span>
+                    </button>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit"
+                        title="<?= __('Add to Cart') ?>"
+                        class="action primary tocart"
+                        id="product-addtocart-button">
+                    <span><?= __('Add to Cart') ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    require(['jquery'], function($) {
+        $('.qty-minus').on('click', function() {
+            var $input = $('#qty');
+            var currentVal = parseInt($input.val());
+            if (currentVal > 1) {
+                $input.val(currentVal - 1).trigger('change');
+            }
+        });
+        $('.qty-plus').on('click', function() {
+            var $input = $('#qty');
+            var currentVal = parseInt($input.val());
+            $input.val(currentVal + 1).trigger('change');
+        });
+    });
+    </script>
+    <?php
+    return;
+}
+
+// Si tiene prescripción, mostrar configurador y ocultar botón estándar
+$productId = $currentProduct->getId();
+?>
+<style>
+    /* Ocultar el botón estándar cuando hay prescripción */
+    .product-info-main .box-tocart {
+        display: none !important;
+    }
+</style>
+
+<!-- Bloque de Cristales Graduados -->
+<div class="powerline-prescription-block">
+    <div class="prescription-header">
+        <svg class="prescription-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        <h3 class="prescription-title">
+            <?= $escaper->escapeHtml(__('Cristales Graduados Disponibles')) ?>
+        </h3>
+    </div>
+    
+    <p class="prescription-description">
+        <?= $escaper->escapeHtml(__('Configure sus cristales graduados con nuestro asistente paso a paso. Elija materiales, tratamientos y suba su receta.')) ?>
+    </p>
+    
+    <!-- Botón Elegir Cristales -->
+    <button type="button" 
+            class="powerline-btn powerline-btn-primary prescription-configure-button"
+            id="prescription-configure-btn"
+            data-product-id="<?= $escaper->escapeHtmlAttr($productId) ?>">
+        <span><?= $escaper->escapeHtml(__('Elegir cristales')) ?></span>
+    </button>
+    
+    <div class="prescription-divider">
+        <span><?= $escaper->escapeHtml(__('o')) ?></span>
+    </div>
+    
+    <!-- Botón Añadir Solo Montura -->
+    <button type="button"
+            id="product-addtocart-button-frame-only"
+            class="powerline-btn powerline-btn-secondary frame-only">
+        <span><?= $escaper->escapeHtml(__('Añadir solo la montura al carrito')) ?></span>
+    </button>
+</div>
+
+<style>
+.powerline-prescription-block {
+    margin: 20px 0;
+    padding: 24px;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.prescription-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.prescription-icon {
+    flex-shrink: 0;
+    color: #333;
+}
+
+.prescription-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.3;
+}
+
+.prescription-description {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.powerline-btn {
+    width: 100%;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.powerline-btn-primary {
+    background: #213b85;
+    color: #fff;
+}
+
+.powerline-btn-primary:hover {
+    background: #1a2f6b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(33, 59, 133, 0.3);
+}
+
+.powerline-btn-secondary {
+    background: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.powerline-btn-secondary:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+}
+
+.prescription-divider {
+    text-align: center;
+    margin: 16px 0;
+    position: relative;
+}
+
+.prescription-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #ddd;
+}
+
+.prescription-divider span {
+    position: relative;
+    background: #f8f9fa;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #999;
+}
+
+@media (max-width: 768px) {
+    .powerline-prescription-block {
+        padding: 18px;
+    }
+    
+    .powerline-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+}
+</style>
+
+<script type="text/x-magento-init">
+{
+    "#prescription-configure-btn": {
+        "Powerline_PrescripcionModule/js/prescription-cta": {
+            "productId": <?= (int)$productId ?>,
+            "configuratorUrl": "<?= $escaper->escapeUrl($block->getConfiguratorUrl()) ?>"
+        }
+    },
+    "#product-addtocart-button-frame-only": {
+        "Powerline_PrescripcionModule/js/add-to-cart": {
+            "productId": <?= (int)$currentProduct->getId() ?>,
+            "frameOnly": true
+        }
+    }
+}
+</script>

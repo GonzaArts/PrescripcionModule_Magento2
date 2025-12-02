@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Powerline PrescripcionModule - ACL
+ *
+ * @category  Powerline
+ * @package   Powerline_PrescripcionModule
+ * @author    Powerline Development Team
+ * @copyright Copyright (c) 2025 Powerline
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Powerline_PrescripcionModule::prescription" title="Prescription Management" sortOrder="100">
+                    <resource id="Powerline_PrescripcionModule::price_table" title="Price Tables" sortOrder="10"/>
+                    <resource id="Powerline_PrescripcionModule::treatments" title="Treatments" sortOrder="20"/>
+                    <resource id="Powerline_PrescripcionModule::rules" title="Rules" sortOrder="30"/>
+                    <resource id="Powerline_PrescripcionModule::attachments" title="Attachments" sortOrder="40"/>
+                    <resource id="Powerline_PrescripcionModule::import_export" title="Import/Export" sortOrder="50"/>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Powerline_PrescripcionModule::config" title="Powerline Prescription Configuration" sortOrder="100"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

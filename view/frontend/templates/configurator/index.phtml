@@ -1,0 +1,1930 @@
+<?php
+/**
+ * @var \Powerline\PrescripcionModule\Block\Configurator $block
+ */
+$product = $block->getProduct();
+if (!$product) {
+    echo '<div class="message error">' . __('Product not found') . '</div>';
+    return;
+}
+?>
+
+<div class="prescription-configurator-container" id="prescription-configurator">
+    
+    <!-- Progress Bar -->
+    <div class="configurator-progress">
+        <div class="progress-steps">
+            <div class="progress-line"></div>
+            <div class="step active" data-step="uso">
+                <span class="step-number">1</span>
+                <span class="step-label"><?= __('Uso') ?></span>
+            </div>
+            <div class="step" data-step="prescripcion">
+                <span class="step-number">2</span>
+                <span class="step-label"><?= __('Prescripción') ?></span>
+            </div>
+            <div class="step" data-step="lentes">
+                <span class="step-number">3</span>
+                <span class="step-label"><?= __('Cristal') ?></span>
+            </div>
+            <div class="step" data-step="tintado">
+                <span class="step-number">4</span>
+                <span class="step-label"><?= __('Tintado') ?></span>
+            </div>
+            <div class="step" data-step="marca">
+                <span class="step-number">5</span>
+                <span class="step-label"><?= __('Marca') ?></span>
+            </div>
+            <div class="step" data-step="indice">
+                <span class="step-number">6</span>
+                <span class="step-label"><?= __('Índice') ?></span>
+            </div>
+            <div class="step" data-step="resumen">
+                <span class="step-number">7</span>
+                <span class="step-label"><?= __('Resumen') ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout: 2 columns on desktop, 1 on mobile -->
+    <div class="configurator-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px;">
+        
+        <!-- Left Column: Configuration Steps -->
+        <div class="configurator-steps" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            
+            <!-- Step 1: Use Type -->
+            <div class="step-content active" data-step="uso">
+                <h2 style="font-size: 24px; margin-bottom: 20px; font-weight: 600;"><?= __('Seleccionar Uso de Lente') ?></h2>
+                <div class="use-type-selector" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    <?php
+                    $useTypes = [
+                        'monofocal' => [
+                            'label' => __('Monofocales'),
+                            'description' => __('Cristales para corregir la visión de lejos (miopía) o de cerca (hipermetropía)'),
+                            'price' => 20.9
+                        ],
+                        'progressive' => [
+                            'label' => __('Progresivos'),
+                            'description' => __('Cristales para corregir la visión de lejos y de cerca, también llamadas progresivas'),
+                            'price' => 86.9,
+                            'price_label' => __('desde')
+                        ],
+                        'no_prescription' => [
+                            'label' => __('Sin Graduación'),
+                            'description' => __('Cristales sin graduar, para usar como accesorio de moda'),
+                            'price' => 20.9
+                        ]
+                    ];
+                    foreach ($useTypes as $value => $data): ?>
+                        <div class="use-type-card" data-use-type="<?= $escaper->escapeHtmlAttr($value) ?>" data-price="<?= $data['price'] ?>" style="display: block; padding: 25px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                            <div style="text-align: center;">
+                                <h3 style="font-size: 18px; font-weight: 600; margin: 0 0 10px 0; color: #333;">
+                                    <?= $escaper->escapeHtml($data['label']) ?>
+                                </h3>
+                                <p style="font-size: 14px; color: #666; margin: 0 0 15px 0; line-height: 1.5;">
+                                    <?= $escaper->escapeHtml($data['description']) ?>
+                                </p>
+                                <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3;">
+                                    <?= isset($data['price_label']) ? $escaper->escapeHtml($data['price_label']) . ' ' : '' ?>
+                                    <?= number_format($data['price'], 2) ?> €
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Progressive Vision Options (shown only when progressive is selected) -->
+                <div class="progressive-vision-options" style="display: none; margin-top: 30px;">
+                    <h3 style="font-size: 20px; margin-bottom: 15px; font-weight: 600; color: #333;"><?= __('Selecciona el tipo de visión progresiva') ?></h3>
+                    <div class="progressive-vision-selector" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <?php
+                        $progressiveVisions = [
+                            'normal' => [
+                                'label' => __('Visión Normal'),
+                                'description' => __('Campo de visión estándar. Ideal para uso general diario'),
+                                'price' => 0
+                            ],
+                            'wide' => [
+                                'label' => __('Visión Amplia'),
+                                'description' => __('Campo de visión ampliado. Mayor comodidad en visión lateral'),
+                                'price' => 88
+                            ],
+                            'max' => [
+                                'label' => __('Máxima Visión'),
+                                'description' => __('Campo de visión máximo. La mejor experiencia visual disponible'),
+                                'price' => 132
+                            ]
+                        ];
+                        foreach ($progressiveVisions as $value => $data): ?>
+                            <div class="progressive-vision-card" data-vision-type="<?= $escaper->escapeHtmlAttr($value) ?>" data-price="<?= $data['price'] ?>" style="display: block; padding: 25px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                <div style="text-align: center;">
+                                    <h3 style="font-size: 18px; font-weight: 600; margin: 0 0 10px 0; color: #333;">
+                                        <?= $escaper->escapeHtml($data['label']) ?>
+                                    </h3>
+                                    <p style="font-size: 14px; color: #666; margin: 0 0 15px 0; line-height: 1.5;">
+                                        <?= $escaper->escapeHtml($data['description']) ?>
+                                    </p>
+                                    <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3;">
+                                        <?= $data['price'] > 0 ? '+' . number_format($data['price'], 2) . ' €' : __('Incluido') ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Prescription -->
+            <div class="step-content" data-step="prescripcion" style="display: none;">
+                <h2 style="font-size: 24px; margin-bottom: 10px; font-weight: 600;"><?= __('Prescripción') ?></h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
+                    <?= __('Introduzca su prescripción') ?><br>
+                    <a href="#" style="color: #1979c3; font-size: 13px;"><?= __('¿Cómo se lee la graduación de mis gafas?') ?></a>
+                </p>
+                
+                <!-- Prescription Table -->
+                <div class="prescription-table" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background: #333; color: white;">
+                                <th style="padding: 12px; text-align: left; font-size: 14px;"></th>
+                                <th style="padding: 12px; text-align: center; font-size: 14px; color: #333;">ESF*</th>
+                                <th style="padding: 12px; text-align: center; font-size: 14px; color: #333;">CIL</th>
+                                <th style="padding: 12px; text-align: center; font-size: 14px; color: #333;">AXIS</th>
+                                <th style="padding: 12px; text-align: center; font-size: 14px; position: relative; color: #fff;">
+                                    ADD
+                                    <span style="cursor: help; margin-left: 5px;">❓</span>
+                                </th>
+                                <th style="padding: 12px; text-align: center; font-size: 14px; background: #f5f5f5;">PD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 12px; font-weight: 600; background: #f9f9f9;">OD<br><span style="font-size: 12px; font-weight: 400;">(Ojo Derecho)</span></td>
+                                <td style="padding: 8px;">
+                                    <select name="od_esf" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = -20.00; $i <= 20.00; $i += 0.25): ?>
+                                            <option value="<?= number_format($i, 2) ?>"><?= number_format($i, 2) ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <select name="od_cil" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = -8.00; $i <= 8.00; $i += 0.25): ?>
+                                            <option value="<?= number_format($i, 2) ?>"><?= number_format($i, 2) ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <select name="od_axis" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = 0; $i <= 180; $i++): ?>
+                                            <option value="<?= $i ?>"><?= $i ?>°</option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <select name="od_add" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = 0.25; $i <= 4.00; $i += 0.25): ?>
+                                            <option value="<?= number_format($i, 2) ?>"><?= number_format($i, 2) ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px; background: #f5f5f5;" rowspan="2">
+                                    <select name="pd" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = 20; $i <= 80; $i++): ?>
+                                            <option value="<?= $i ?>"><?= $i ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; font-weight: 600; background: #f9f9f9;">OI<br><span style="font-size: 12px; font-weight: 400;">(Ojo Izquierdo)</span></td>
+                                <td style="padding: 8px;">
+                                    <select name="oi_esf" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = -20.00; $i <= 20.00; $i += 0.25): ?>
+                                            <option value="<?= number_format($i, 2) ?>"><?= number_format($i, 2) ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <select name="oi_cil" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = -8.00; $i <= 8.00; $i += 0.25): ?>
+                                            <option value="<?= number_format($i, 2) ?>"><?= number_format($i, 2) ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <select name="oi_axis" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = 0; $i <= 180; $i++): ?>
+                                            <option value="<?= $i ?>"><?= $i ?>°</option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <select name="oi_add" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-</option>
+                                        <?php for ($i = 0.25; $i <= 4.00; $i += 0.25): ?>
+                                            <option value="<?= number_format($i, 2) ?>"><?= number_format($i, 2) ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- PD Doble Option -->
+                    <div style="margin-top: 20px;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="dual-pd-checkbox" style="width: 18px; height: 18px;">
+                            <span style="font-size: 14px; color: #1979c3;"><?= __('Tengo dos números DP') ?></span>
+                        </label>
+                        
+                        <!-- Dual PD Fields (hidden by default) -->
+                        <div id="dual-pd-fields" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <label style="display: block; font-size: 14px; color: #333; margin-bottom: 5px; font-weight: 500;"><?= __('PD Derecho (OD)') ?></label>
+                                    <input type="number" name="pd_right" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" step="0.5" min="20" max="40">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 14px; color: #333; margin-bottom: 5px; font-weight: 500;"><?= __('PD Izquierdo (OI)') ?></label>
+                                    <input type="number" name="pd_left" class="prescription-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" step="0.5" min="20" max="40">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Prescription - Próximamente -->
+                    <div style="margin-top: 25px; padding: 20px; background: #f5f5f5; border: 2px dashed #ccc; border-radius: 8px; opacity: 0.7;">
+                        <h4 style="font-size: 16px; color: #666; margin-bottom: 10px; font-weight: 600;">
+                            <span style="font-size: 20px; margin-right: 8px;">🔒</span><?= __('Subir Receta Óptica') ?>
+                        </h4>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 10px; line-height: 1.6;">
+                            <?= __('Funcionalidad próximamente disponible. Podrá subir su receta óptica en formato JPG, PNG o PDF.') ?>
+                        </p>
+                        <div style="display: inline-block; padding: 8px 16px; background: #e0e0e0; color: #666; border-radius: 4px; font-size: 13px; font-weight: 600;">
+                            <?= __('⏳ PRÓXIMAMENTE') ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Lenses -->
+            <div class="step-content" data-step="lentes" style="display: none;">
+                <h2 style="font-size: 24px; margin-bottom: 10px; font-weight: 600;"><?= __('Tipo de Cristal') ?></h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+                    <?= __('Seleccione el tipo de cristal que mejor se adapte a sus necesidades') ?>
+                </p>
+                
+                <!-- Lens Type Cards -->
+                <div class="lens-type-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                    
+                    <!-- Transparentes (Default/Included) -->
+                    <div class="lens-type-card" data-lens-type="transparent" data-price="0" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; position: relative; background: white;">
+                        <div class="recommended-badge" style="position: absolute; top: -10px; right: 10px; background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            <?= __('RECOMENDADO') ?>
+                        </div>
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Transparentes') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('Cristales estándar sin tratamiento adicional. Perfectos para uso diario en interiores.') ?>
+                        </p>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #27ae60; margin-top: 12px;">
+                            <?= __('Incluidos') ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Protección Digital -->
+                    <div class="lens-type-card" data-lens-type="digital_protection" data-price="59" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Protección Digital') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('Filtro luz azul para pantallas. Reduce fatiga ocular por ordenadores y móviles.') ?>
+                        </p>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3; margin-top: 12px;">
+                            +59,00€
+                        </div>
+                    </div>
+                    
+                    <!-- Tintados -->
+                    <div class="lens-type-card" data-lens-type="tinted" data-price="0" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Tintados') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('Variedad de opciones con color en el cristal. Desde básicos hasta polarizados.') ?>
+                        </p>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3; margin-top: 12px;">
+                            <?= __('desde') ?> +29€
+                        </div>
+                    </div>
+                    
+                    <!-- Fotocromáticos -->
+                    <div class="lens-type-card" data-lens-type="photochromic" data-price="108.90" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Fotocromáticos') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('Se oscurecen automáticamente con luz solar. Gafas y gafas de sol en uno.') ?>
+                        </p>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3; margin-top: 12px;">
+                            +108,90€
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Info Note -->
+                <div style="background: #f0f8ff; border-left: 4px solid #1979c3; padding: 15px; border-radius: 4px;">
+                    <p style="font-size: 14px; color: #333; margin: 0; line-height: 1.6;">
+                        <strong>💡 Consejo:</strong> Los cristales transparentes son suficientes para uso diario. Si trabajas muchas horas frente a pantallas, considera la protección digital.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 4: Tinted Options (shown only when tinted is selected) -->
+            <div class="step-content" data-step="tintado" style="display: none;">
+                <h2 style="font-size: 24px; margin-bottom: 20px; font-weight: 600;"><?= __('Configurar Cristales Tintados') ?></h2>
+                
+                <!-- Tinted Categories -->
+                <div class="tinted-category-selector" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    
+                    <!-- Básicos -->
+                    <div class="tinted-category-card" data-category="basicos" data-price="29" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 20px; font-weight: 600; margin: 0 0 10px 0; color: #333; text-align: center;"><?= __('BÁSICOS') ?></h3>
+                        <hr style="border: none; border-top: 1px dotted #ddd; margin: 15px 0;">
+                        <p style="font-size: 14px; color: #666; margin: 0 0 15px 0; line-height: 1.5; text-align: center;">
+                            <?= __('Teñido uniforme en toda la lente con colores clásicos') ?>
+                        </p>
+                        <div class="price" style="font-size: 24px; font-weight: 700; color: #1979c3; text-align: center; margin-top: 15px;">
+                            29 €
+                        </div>
+                    </div>
+
+                    <!-- Degradados -->
+                    <div class="tinted-category-card" data-category="degradados" data-price="49" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 20px; font-weight: 600; margin: 0 0 10px 0; color: #333; text-align: center;"><?= __('DEGRADADOS') ?></h3>
+                        <hr style="border: none; border-top: 1px dotted #ddd; margin: 15px 0;">
+                        <p style="font-size: 14px; color: #666; margin: 0 0 15px 0; line-height: 1.5; text-align: center;">
+                            <?= __('Tintado con un degradado más oscuro en la parte superior de la lente y más claro en la inferior') ?>
+                        </p>
+                        <div class="price" style="font-size: 24px; font-weight: 700; color: #1979c3; text-align: center; margin-top: 15px;">
+                            49 €
+                        </div>
+                    </div>
+
+                    <!-- Espejados -->
+                    <div class="tinted-category-card" data-category="espejados" data-price="39" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 20px; font-weight: 600; margin: 0 0 10px 0; color: #333; text-align: center;"><?= __('ESPEJADOS') ?></h3>
+                        <hr style="border: none; border-top: 1px dotted #ddd; margin: 15px 0;">
+                        <p style="font-size: 14px; color: #666; margin: 0 0 15px 0; line-height: 1.5; text-align: center;">
+                            <?= __('Tintado con efecto espejo en diferentes colores, que evitan que se vean los ojos') ?>
+                        </p>
+                        <div class="price" style="font-size: 24px; font-weight: 700; color: #1979c3; text-align: center; margin-top: 15px;">
+                            39 €
+                        </div>
+                    </div>
+
+                    <!-- Polarizados -->
+                    <div class="tinted-category-card" data-category="polarizados" data-price="39" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 20px; font-weight: 600; margin: 0 0 10px 0; color: #333; text-align: center;"><?= __('POLARIZADOS') ?></h3>
+                        <hr style="border: none; border-top: 1px dotted #ddd; margin: 15px 0;">
+                        <p style="font-size: 14px; color: #666; margin: 0 0 15px 0; line-height: 1.5; text-align: center;">
+                            <?= __('Tintado en colores clásicos pero con un filtro adicional que reduce los reflejos y la niebla') ?>
+                        </p>
+                        <div class="price" style="font-size: 24px; font-weight: 700; color: #1979c3; text-align: center; margin-top: 15px;">
+                            39 €
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basicos Options -->
+                <div class="tinted-basicos-options" style="display: none; padding: 25px; background: white; border: 2px solid #ddd; border-radius: 8px;">
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #333; text-transform: uppercase;"><?= __('Intensidad del tintado:') ?></label>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="basicos-intensity-option" data-intensity="50" style="flex: 1; padding: 12px 20px; border: 2px solid #333; background: #333; color: white; border-radius: 4px; text-align: center; cursor: pointer; font-weight: 600; transition: all 0.3s;"><?= __('Claro 50%') ?></div>
+                            <div class="basicos-intensity-option" data-intensity="80" style="flex: 1; padding: 12px 20px; border: 2px solid #ddd; background: white; color: #333; border-radius: 4px; text-align: center; cursor: pointer; font-weight: 600; transition: all 0.3s;"><?= __('Oscuro 80%') ?></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #333; text-transform: uppercase;"><?= __('Color del tintado:') ?></label>
+                        <div style="display: flex; gap: 15px; justify-content: flex-start;">
+                            <div class="basicos-color-option" data-color="gris" style="width: 50px; height: 50px; border-radius: 50%; background: #6b6b6b; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                            <div class="basicos-color-option" data-color="marron" style="width: 50px; height: 50px; border-radius: 50%; background: #8b6914; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                            <div class="basicos-color-option" data-color="verde" style="width: 50px; height: 50px; border-radius: 50%; background: #4a6741; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Degradados Options -->
+                <div class="tinted-degradados-options" style="display: none; padding: 25px; background: white; border: 2px solid #ddd; border-radius: 8px;">
+                    <label style="display: block; font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #333; text-transform: uppercase;"><?= __('Color del tintado:') ?></label>
+                    <div style="display: flex; gap: 15px; justify-content: flex-start;">
+                        <div class="degradados-color-option" data-color="gris-blanco" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(180deg, #6b6b6b 0%, #f0f0f0 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="degradados-color-option" data-color="marron-blanco" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(180deg, #8b6914 0%, #f0f0f0 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="degradados-color-option" data-color="verde-blanco" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(180deg, #4a6741 0%, #f0f0f0 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    </div>
+                </div>
+
+                <!-- Espejados Options -->
+                <div class="tinted-espejados-options" style="display: none; padding: 25px; background: white; border: 2px solid #ddd; border-radius: 8px;">
+                    <label style="display: block; font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #333; text-transform: uppercase;"><?= __('Color del tintado:') ?></label>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: flex-start;">
+                        <div class="espejados-color-option" data-color="verde" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #7fd47f 0%, #2d6b2d 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="azul" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #7fa5d4 0%, #2d4a6b 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="morado" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #b47fd4 0%, #5a2d6b 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="rosa" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #ff88c2 0%, #d43a79 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="amarillo" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #ffeb7f 0%, #d4b92d 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="gris" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #c0c0c0 0%, #6b6b6b 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="rojo" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #ff7f7f 0%, #d42d2d 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="espejados-color-option" data-color="naranja" style="width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, #ffb27f 0%, #d4682d 100%); cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    </div>
+                </div>
+
+                <!-- Polarizados Options -->
+                <div class="tinted-polarizados-options" style="display: none; padding: 25px; background: white; border: 2px solid #ddd; border-radius: 8px;">
+                    <label style="display: block; font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #333; text-transform: uppercase;"><?= __('Color del polarizado:') ?></label>
+                    <div style="display: flex; gap: 15px; justify-content: flex-start; margin-bottom: 20px;">
+                        <div class="polarizados-color-option" data-color="gris" style="width: 50px; height: 50px; border-radius: 50%; background: #6b6b6b; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="polarizados-color-option" data-color="marron" style="width: 50px; height: 50px; border-radius: 50%; background: #8b6914; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                        <div class="polarizados-color-option" data-color="verde" style="width: 50px; height: 50px; border-radius: 50%; background: #4a6741; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    </div>
+                    <p style="font-size: 13px; color: #666; margin: 0;"><strong><?= __('Nota:') ?></strong> <?= __('Los polarizados comparten la selección de índice con los transparentes') ?></p>
+                </div>
+            </div>
+
+            <!-- Step 5: Brand -->
+            <div class="step-content" data-step="marca" style="display: none;">
+                <h2 style="font-size: 24px; margin-bottom: 10px; font-weight: 600;"><?= __('Marca de Cristales') ?></h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+                    <?= __('Seleccione la marca de sus cristales') ?>
+                </p>
+                
+                <!-- Brand Cards -->
+                <div class="brand-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                    
+                    <!-- Marca Propia (Default/Included) -->
+                    <div class="brand-card" data-brand="own" data-price="0" data-price-digital="59" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; position: relative; background: white;">
+                        <div class="recommended-badge" style="position: absolute; top: -10px; right: 10px; background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            <?= __('RECOMENDADO') ?>
+                        </div>
+                        <h3 style="font-size: 20px; margin-bottom: 12px; font-weight: 600; color: #333;">
+                            <?= __('Marca Propia') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.6;">
+                            <?= __('Cristales de alta calidad fabricados con los mejores estándares. Excelente relación calidad-precio.') ?>
+                        </p>
+                        <ul style="font-size: 13px; color: #666; margin-bottom: 15px; padding-left: 20px;">
+                            <li style="margin-bottom: 5px;"><?= __('Garantía de 2 años') ?></li>
+                            <li style="margin-bottom: 5px;"><?= __('Protección UV400') ?></li>
+                            <li style="margin-bottom: 5px;"><?= __('Tratamiento antirreflejante') ?></li>
+                        </ul>
+                        <div class="price brand-price" style="font-size: 22px; font-weight: 700; color: #27ae60; margin-top: 15px;">
+                            <?= __('Incluido') ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Essilor -->
+                    <div class="brand-card" data-brand="essilor" data-price="30" data-price-digital="110" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 20px; margin-bottom: 12px; font-weight: 600; color: #333;">
+                            <?= __('Essilor') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.6;">
+                            <?= __('Líder mundial en lentes oftálmicas. Tecnología avanzada y máxima calidad óptica.') ?>
+                        </p>
+                        <ul style="font-size: 13px; color: #666; margin-bottom: 15px; padding-left: 20px;">
+                            <li style="margin-bottom: 5px;"><?= __('Tecnología Crizal (antirreflejante superior)') ?></li>
+                            <li style="margin-bottom: 5px;"><?= __('Mayor durabilidad y resistencia') ?></li>
+                            <li style="margin-bottom: 5px;"><?= __('Claridad óptica excepcional') ?></li>
+                        </ul>
+                        <div class="price brand-price" style="font-size: 22px; font-weight: 700; color: #1979c3; margin-top: 15px;">
+                            +30,00€
+                        </div>
+                    </div>
+                    
+                    <!-- Zeiss -->
+                    <div class="brand-card" data-brand="zeiss" data-price="30" data-price-digital="110" style="border: 2px solid #ddd; border-radius: 8px; padding: 25px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 20px; margin-bottom: 12px; font-weight: 600; color: #333;">
+                            <?= __('Zeiss') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.6;">
+                            <?= __('Precisión alemana en óptica. Reconocida mundialmente por su innovación y excelencia.') ?>
+                        </p>
+                        <ul style="font-size: 13px; color: #666; margin-bottom: 15px; padding-left: 20px;">
+                            <li style="margin-bottom: 5px;"><?= __('Tecnología DuraVision (protección superior)') ?></li>
+                            <li style="margin-bottom: 5px;"><?= __('Visión nítida en todas las condiciones') ?></li>
+                            <li style="margin-bottom: 5px;"><?= __('Reducción de fatiga visual') ?></li>
+                        </ul>
+                        <div class="price brand-price" style="font-size: 22px; font-weight: 700; color: #1979c3; margin-top: 15px;">
+                            +30,00€
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Info Note -->
+                <div style="background: #f0f8ff; border-left: 4px solid #1979c3; padding: 15px; border-radius: 4px;">
+                    <p style="font-size: 14px; color: #333; margin: 0; line-height: 1.6;">
+                        <strong>💡 Consejo:</strong> Nuestra marca propia ofrece excelente calidad. Las marcas premium añaden tratamientos avanzados y mayor durabilidad.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 6: Index -->
+            <div class="step-content" data-step="indice" style="display: none;">
+                <h2 style="font-size: 24px; margin-bottom: 10px; font-weight: 600;"><?= __('Índice de Refracción') ?></h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+                    <?= __('El índice determina el grosor del cristal. Mayor índice = cristal más fino.') ?>
+                </p>
+                
+                <!-- Index Cards -->
+                <div class="index-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                    
+                    <!-- Index 1.5 (Default/Included) -->
+                    <div class="index-card" data-index="1.5" data-price="0" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; position: relative; background: white;">
+                        <div class="recommended-badge" style="position: absolute; top: -10px; right: 10px; background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            <?= __('INCLUIDO') ?>
+                        </div>
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Índice 1.5') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('Grosor estándar. Recomendado para graduaciones bajas (hasta ±2.00).') ?>
+                        </p>
+                        <div class="thickness-bar" style="margin: 15px 0;">
+                            <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                                <div style="background: #27ae60; width: 100%; height: 100%; border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 12px; color: #666; margin-top: 5px; display: block;"><?= __('Grosor: Estándar') ?></span>
+                        </div>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #27ae60; margin-top: 12px;">
+                            <?= __('Incluido') ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Index 1.6 -->
+                    <div class="index-card" data-index="1.6" data-price="31.90" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Índice 1.6') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('20% más fino. Recomendado para graduaciones medias (±2.00 a ±4.00).') ?>
+                        </p>
+                        <div class="thickness-bar" style="margin: 15px 0;">
+                            <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                                <div style="background: #1979c3; width: 80%; height: 100%; border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 12px; color: #666; margin-top: 5px; display: block;"><?= __('Grosor: 20% más fino') ?></span>
+                        </div>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3; margin-top: 12px;">
+                            +31,90€
+                        </div>
+                    </div>
+                    
+                    <!-- Index 1.67 -->
+                    <div class="index-card" data-index="1.67" data-price="64.90" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Índice 1.67') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('40% más fino. Recomendado para graduaciones altas (±4.00 a ±6.00).') ?>
+                        </p>
+                        <div class="thickness-bar" style="margin: 15px 0;">
+                            <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                                <div style="background: #1979c3; width: 60%; height: 100%; border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 12px; color: #666; margin-top: 5px; display: block;"><?= __('Grosor: 40% más fino') ?></span>
+                        </div>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3; margin-top: 12px;">
+                            +64,90€
+                        </div>
+                    </div>
+                    
+                    <!-- Index 1.74 -->
+                    <div class="index-card" data-index="1.74" data-price="141.90" style="border: 2px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s; background: white;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600; color: #333;">
+                            <?= __('Índice 1.74') ?>
+                        </h3>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                            <?= __('60% más fino. Máxima reducción para graduaciones muy altas (>±6.00).') ?>
+                        </p>
+                        <div class="thickness-bar" style="margin: 15px 0;">
+                            <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                                <div style="background: #e67e22; width: 40%; height: 100%; border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 12px; color: #666; margin-top: 5px; display: block;"><?= __('Grosor: 60% más fino (Ultra fino)') ?></span>
+                        </div>
+                        <div class="price" style="font-size: 20px; font-weight: 700; color: #1979c3; margin-top: 12px;">
+                            +141,90€
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Info Note -->
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px;">
+                    <p style="font-size: 14px; color: #856404; margin: 0; line-height: 1.6;">
+                        <strong>⚠️ Importante:</strong> Si tienes una graduación alta (>±4.00), te recomendamos índice 1.67 o superior para mayor comodidad y estética.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 7: Summary -->
+            <div class="step-content" data-step="resumen" style="display: none;">
+                <h2 style="font-size: 24px; margin-bottom: 10px; font-weight: 600;"><?= __('Resumen de Configuración') ?></h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+                    <?= __('Revise su configuración antes de añadir al carrito. Puede editar cualquier sección.') ?>
+                </p>
+                
+                <!-- Configuration Summary -->
+                <div class="configuration-summary">
+                    
+                    <!-- Use Type Summary -->
+                    <div class="summary-section" style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 16px; color: #1979c3; margin-bottom: 8px; font-weight: 600;"><?= __('Tipo de Uso') ?></h3>
+                                <p class="summary-use-type" style="font-size: 15px; color: #333; margin: 0;">-</p>
+                            </div>
+                            <button type="button" class="btn-edit-step" data-step="1" style="padding: 8px 16px; font-size: 14px; background: #f0f8ff; color: #1979c3; border: 1px solid #1979c3; border-radius: 4px; cursor: pointer;">
+                                <?= __('Editar') ?>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Prescription Summary -->
+                    <div class="summary-section" style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 16px; color: #1979c3; margin-bottom: 12px; font-weight: 600;"><?= __('Prescripción') ?></h3>
+                                <div class="summary-prescription" style="font-size: 14px; color: #333;">
+                                    <div style="margin-bottom: 8px;">
+                                        <strong>OD (Ojo Derecho):</strong> <span class="prescription-od">-</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <strong>OI (Ojo Izquierdo):</strong> <span class="prescription-oi">-</span>
+                                    </div>
+                                    <div>
+                                        <strong>PD:</strong> <span class="prescription-pd">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-edit-step" data-step="2" style="padding: 8px 16px; font-size: 14px; background: #f0f8ff; color: #1979c3; border: 1px solid #1979c3; border-radius: 4px; cursor: pointer;">
+                                <?= __('Editar') ?>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Lens Type Summary -->
+                    <div class="summary-section" style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 16px; color: #1979c3; margin-bottom: 8px; font-weight: 600;"><?= __('Tipo de Cristal') ?></h3>
+                                <p class="summary-lens-type" style="font-size: 15px; color: #333; margin: 0;">-</p>
+                                <p class="summary-lens-price" style="font-size: 14px; color: #666; margin: 5px 0 0 0;">-</p>
+                            </div>
+                            <button type="button" class="btn-edit-step" data-step="3" style="padding: 8px 16px; font-size: 14px; background: #f0f8ff; color: #1979c3; border: 1px solid #1979c3; border-radius: 4px; cursor: pointer;">
+                                <?= __('Editar') ?>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Brand Summary -->
+                    <div class="summary-section" style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 16px; color: #1979c3; margin-bottom: 8px; font-weight: 600;"><?= __('Marca') ?></h3>
+                                <p class="summary-brand" style="font-size: 15px; color: #333; margin: 0;">-</p>
+                                <p class="summary-brand-price" style="font-size: 14px; color: #666; margin: 5px 0 0 0;">-</p>
+                            </div>
+                            <button type="button" class="btn-edit-step" data-step="4" style="padding: 8px 16px; font-size: 14px; background: #f0f8ff; color: #1979c3; border: 1px solid #1979c3; border-radius: 4px; cursor: pointer;">
+                                <?= __('Editar') ?>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Index Summary -->
+                    <div class="summary-section" style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 16px; color: #1979c3; margin-bottom: 8px; font-weight: 600;"><?= __('Índice de Refracción') ?></h3>
+                                <p class="summary-index" style="font-size: 15px; color: #333; margin: 0;">-</p>
+                                <p class="summary-index-price" style="font-size: 14px; color: #666; margin: 5px 0 0 0;">-</p>
+                            </div>
+                            <button type="button" class="btn-edit-step" data-step="5" style="padding: 8px 16px; font-size: 14px; background: #f0f8ff; color: #1979c3; border: 1px solid #1979c3; border-radius: 4px; cursor: pointer;">
+                                <?= __('Editar') ?>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Summary -->
+                    <div class="summary-total">
+                        <div class="summary-total-line">
+                            <span class="summary-total-label"><?= __('Subtotal') ?></span>
+                            <span class="summary-subtotal">--</span>
+                        </div>
+                        <div class="summary-total-line total-final">
+                            <span class="summary-total-label"><?= __('TOTAL') ?></span>
+                            <span class="summary-total-price">--</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="configurator-navigation" style="display: flex; justify-content: space-between; margin-top: 30px; gap: 15px;">
+                <button type="button" class="action secondary btn-prev" style="padding: 12px 30px; font-size: 16px; border-radius: 4px; display: none;">
+                    <?= __('Anterior') ?>
+                </button>
+                <button type="button" class="action primary btn-next" disabled style="padding: 12px 30px; font-size: 16px; border-radius: 4px; opacity: 0.5; cursor: not-allowed;">
+                    <?= __('Siguiente') ?>
+                </button>
+                <button type="button" class="action primary btn-add-to-cart" style="display: none; padding: 12px 30px; font-size: 16px; border-radius: 4px;">
+                    <?= __('Añadir al Carrito') ?>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Column: Price Summary -->
+        <div class="configurator-summary" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 20px; height: fit-content;">
+            <div class="price-summary">
+                <h3><?= __('Resumen de Precio') ?></h3>
+                
+                <div class="price-loading" style="display: none; text-align: center; padding: 20px;">
+                    <span class="loader"></span>
+                    <p style="margin-top: 10px; font-size: 16px;"><?= __('Calculando...') ?></p>
+                </div>
+
+                <div class="price-breakdown">
+                    <!-- Precio de la Montura -->
+                    <div class="price-line frame-line">
+                        <span class="label"><?= __('Montura') ?></span>
+                        <span class="value" data-price="frame"><?= $block->getProduct() ? number_format($block->getProduct()->getPriceInfo()->getPrice('final_price')->getAmount()->getValue(), 2) . ' €' : '--' ?></span>
+                    </div>
+                    
+                    <div class="price-line">
+                        <span class="label"><?= __('Lente Base') ?></span>
+                        <span class="value" data-price="base">--</span>
+                    </div>
+                    <div class="price-line">
+                        <span class="label"><?= __('Recargos de Prescripción') ?></span>
+                        <span class="value" data-price="surcharges">--</span>
+                    </div>
+                    <div class="price-line">
+                        <span class="label"><?= __('Tratamientos') ?></span>
+                        <span class="value" data-price="treatments">--</span>
+                    </div>
+                    <div class="price-line">
+                        <span class="label"><?= __('Extras') ?></span>
+                        <span class="value" data-price="extras">--</span>
+                    </div>
+                    
+                    <hr class="price-separator">
+                    
+                    <div class="price-line subtotal">
+                        <span class="label"><?= __('Subtotal') ?></span>
+                        <span class="value" data-price="subtotal">
+                            <?= $block->getProduct() ? number_format($block->getProduct()->getPriceInfo()->getPrice('final_price')->getAmount()->getValue(), 2) . ' €' : '--' ?>
+                        </span>
+                    </div>
+                    
+                    <hr class="price-separator thick">
+                    
+                    <div class="price-line total">
+                        <span class="label"><?= __('Total') ?></span>
+                        <span class="value" data-price="total">
+                            <?= $block->getProduct() ? number_format($block->getProduct()->getPriceInfo()->getPrice('final_price')->getAmount()->getValue(), 2) . ' €' : '--' ?>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Validation Messages -->
+                <div class="validation-messages" style="display: none; margin-top: 25px; padding: 18px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px;">
+                    <div class="message-list" style="font-size: 15px; color: #856404;"></div>
+                </div>
+
+                <!-- Help Text -->
+                <div class="help-text" style="margin-top: 25px; padding: 18px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid #213b85;">
+                    <p style="font-size: 14px; color: #666; margin: 0; line-height: 1.6;"><?= __('Los precios se calculan en tiempo real según su configuración. El precio base incluye la montura.') ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+require(['jquery', 'Magento_Ui/js/modal/modal'], function($, modal) {
+    'use strict';
+    
+    // Read parameters from URL (passed from product page)
+    const urlParams = new URLSearchParams(window.location.search);
+    const savedSuperAttribute = {};
+    let simpleProductIdFromUrl = null;
+    
+    urlParams.forEach((value, key) => {
+        if (key.startsWith('super_attribute_')) {
+            const attributeId = key.replace('super_attribute_', '');
+            savedSuperAttribute[attributeId] = value;
+            console.log('Loaded super_attribute from URL:', attributeId, '=', value);
+        } else if (key === 'simple_product') {
+            simpleProductIdFromUrl = value;
+            console.log('Loaded simple_product from URL:', value);
+        }
+    });
+    
+    // Configuration data - Precio de montura con IVA incluido
+    const baseFramePrice = <?= $block->getProduct() ? $block->getProduct()->getPriceInfo()->getPrice('final_price')->getAmount()->getValue() : 0 ?>;
+    let currentStep = 1;
+    const steps = ['uso', 'prescripcion', 'lentes', 'tintado', 'marca', 'indice', 'resumen'];
+    let configData = {
+        useType: null,
+        progressiveVision: null,
+        progressiveVisionPrice: 0,
+        prescription: {},
+        prescriptionFile: null,
+        attachmentId: null,
+        lensType: null,
+        tintedCategory: null,
+        tintedCategoryPrice: 0,
+        tintedOptions: {},
+        brand: null,
+        index: null,
+        frame: baseFramePrice,
+        base: 0,
+        surcharges: 0,
+        treatments: 0,
+        extras: 0
+    };
+    
+    // Update active step in progress bar
+    function updateProgressBar(step) {
+        $('.step').each(function(index) {
+            $(this).removeClass('active completed');
+            if (index < step - 1) {
+                $(this).addClass('completed');
+            } else if (index === step - 1) {
+                $(this).addClass('active');
+            }
+        });
+    }
+    
+    // Show/Hide ADD column based on use type
+    function toggleAddColumn() {
+        const isProgressive = configData.useType === 'progressive';
+        
+        if (isProgressive) {
+            // Show ADD column
+            $('th:contains("ADD"), td select[name="od_add"], td select[name="oi_add"]').closest('th, td').show();
+        } else {
+            // Hide ADD column
+            $('th:contains("ADD"), td select[name="od_add"], td select[name="oi_add"]').closest('th, td').hide();
+            // Clear ADD values
+            $('select[name="od_add"], select[name="oi_add"]').val('');
+        }
+    }
+    
+    // Enable/Disable AXIS based on CIL value
+    function updateAxisState() {
+        // OD AXIS
+        const odCil = $('select[name="od_cil"]').val();
+        const odAxis = $('select[name="od_axis"]');
+        if (odCil && odCil !== '') {
+            odAxis.prop('disabled', false).css('opacity', '1');
+        } else {
+            odAxis.prop('disabled', true).val('').css('opacity', '0.5');
+        }
+        
+        // OI AXIS
+        const oiCil = $('select[name="oi_cil"]').val();
+        const oiAxis = $('select[name="oi_axis"]');
+        if (oiCil && oiCil !== '') {
+            oiAxis.prop('disabled', false).css('opacity', '1');
+        } else {
+            oiAxis.prop('disabled', true).val('').css('opacity', '0.5');
+        }
+    }
+    
+    // Update brand prices based on lens type
+    function updateBrandPrices() {
+        const isDigitalProtection = configData.lensType === 'digital_protection';
+        
+        $('.brand-card').each(function() {
+            const $card = $(this);
+            const normalPrice = parseFloat($card.data('price')) || 0;
+            const digitalPrice = parseFloat($card.data('price-digital')) || 0;
+            const priceToUse = isDigitalProtection ? digitalPrice : normalPrice;
+            
+            // Update the data-price attribute to reflect current pricing
+            $card.data('current-price', priceToUse);
+            
+            // Update the displayed price
+            const $priceElement = $card.find('.brand-price');
+            if (priceToUse === 0) {
+                $priceElement.text('Incluido').css('color', '#27ae60');
+            } else {
+                $priceElement.text('+' + priceToUse.toFixed(2).replace('.', ',') + '€').css('color', '#1979c3');
+            }
+        });
+    }
+    
+    // Navigate to step
+    function goToStep(step) {
+        if (step < 1 || step > steps.length) return;
+        
+        // Skip prescripcion step if no prescription is selected
+        if (steps[step - 1] === 'prescripcion' && configData.useType === 'no_prescription') {
+            if (step > currentStep) {
+                goToStep(step + 1);
+            } else {
+                goToStep(step - 1);
+            }
+            return;
+        }
+        
+        // Skip tintado step if lens type is not tinted
+        if (steps[step - 1] === 'tintado' && configData.lensType !== 'tinted') {
+            if (step > currentStep) {
+                goToStep(step + 1);
+            } else {
+                goToStep(step - 1);
+            }
+            return;
+        }
+        
+        currentStep = step;
+        
+        // Show/hide content
+        $('.step-content').hide();
+        $('.step-content[data-step="' + steps[step - 1] + '"]').show();
+        
+        // Update progress bar
+        updateProgressBar(step);
+        
+        // Update brand prices if entering marca step
+        if (steps[step - 1] === 'marca') {
+            updateBrandPrices();
+        }
+        
+        // Update navigation buttons
+        if (step === 1) {
+            $('.btn-prev').hide();
+        } else {
+            $('.btn-prev').show();
+        }
+        
+        // Show/hide buttons based on step
+        if (step === steps.length) {
+            // Last step: show add to cart button
+            $('.btn-next').hide();
+            $('.btn-add-to-cart').show();
+            updateSummary();
+        } else {
+            $('.btn-next').show();
+            $('.btn-add-to-cart').hide();
+        }
+        
+        validateCurrentStep();
+        
+        // Scroll to top
+        $('html, body').animate({scrollTop: 0}, 300);
+    }
+    
+    // Update summary section
+    function updateSummary() {
+        // Use Type
+        const useTypeLabels = {
+            'monofocal': 'Monofocales',
+            'progressive': 'Progresivos',
+            'no_prescription': 'Sin Graduación'
+        };
+        $('.summary-use-type').text(useTypeLabels[configData.useType] || '-');
+        
+        // Prescription
+        const odEsf = configData.prescription.od_esf || '-';
+        const odCil = configData.prescription.od_cil || '-';
+        const odAxis = configData.prescription.od_axis || '-';
+        const odAdd = configData.prescription.od_add || '-';
+        $('.prescription-od').text('ESF: ' + odEsf + ', CIL: ' + odCil + ', AXIS: ' + odAxis + ', ADD: ' + odAdd);
+        
+        const oiEsf = configData.prescription.oi_esf || '-';
+        const oiCil = configData.prescription.oi_cil || '-';
+        const oiAxis = configData.prescription.oi_axis || '-';
+        const oiAdd = configData.prescription.oi_add || '-';
+        $('.prescription-oi').text('ESF: ' + oiEsf + ', CIL: ' + oiCil + ', AXIS: ' + oiAxis + ', ADD: ' + oiAdd);
+        
+        $('.prescription-pd').text(configData.prescription.pd || '-');
+        
+        // Lens Type
+        const lensTypeLabels = {
+            'transparent': 'Transparentes',
+            'digital_protection': 'Protección Digital',
+            'tinted': 'Tintados',
+            'photochromic': 'Fotocromáticos'
+        };
+        $('.summary-lens-type').text(lensTypeLabels[configData.lensType] || '-');
+        $('.summary-lens-price').text(configData.surcharges > 0 ? '+' + configData.surcharges.toFixed(2) + '€' : 'Incluido');
+        
+        // Brand
+        const brandLabels = {
+            'own': 'Marca Propia',
+            'essilor': 'Essilor',
+            'zeiss': 'Zeiss'
+        };
+        $('.summary-brand').text(brandLabels[configData.brand] || '-');
+        $('.summary-brand-price').text(configData.treatments > 0 ? '+' + configData.treatments.toFixed(2) + '€' : 'Incluido');
+        
+        // Index
+        $('.summary-index').text(configData.index ? 'Índice ' + configData.index : '-');
+        const indexPrice = configData.index ? parseFloat($('.index-card[data-index="' + configData.index + '"]').data('price')) || 0 : 0;
+        $('.summary-index-price').text(indexPrice > 0 ? '+' + indexPrice.toFixed(2) + '€' : 'Incluido');
+        
+        // Totals (sin IVA adicional)
+        const total = configData.frame + configData.base + configData.surcharges + configData.treatments + configData.extras;
+        
+        $('.summary-subtotal').text(total.toFixed(2) + '€');
+        $('.summary-total-price').text(total.toFixed(2) + '€');
+    }
+    
+    // Validate current step
+    function validateCurrentStep() {
+        let isValid = false;
+        
+        switch (steps[currentStep - 1]) {
+            case 'uso':
+                isValid = configData.useType !== null;
+                // If progressive, also require vision type selection
+                if (configData.useType === 'progressive') {
+                    isValid = isValid && configData.progressiveVision !== null;
+                }
+                break;
+                
+            case 'prescripcion':
+                // Skip validation if no prescription selected
+                if (configData.useType === 'no_prescription') {
+                    isValid = true;
+                } else {
+                    // Validate prescription: ESF is required for both eyes
+                    const odEsf = $('select[name="od_esf"]').val();
+                    const oiEsf = $('select[name="oi_esf"]').val();
+                    isValid = odEsf !== '' && oiEsf !== '';
+                }
+                break;
+                
+            case 'lentes':
+                isValid = configData.lensType !== null;
+                break;
+                
+            case 'tintado':
+                isValid = configData.tintedCategory !== null;
+                // Validate based on category
+                if (configData.tintedCategory === 'basicos') {
+                    isValid = isValid && configData.tintedOptions.intensity && configData.tintedOptions.color;
+                } else if (configData.tintedCategory === 'degradados') {
+                    isValid = isValid && configData.tintedOptions.color;
+                } else if (configData.tintedCategory === 'espejados') {
+                    isValid = isValid && configData.tintedOptions.color;
+                } else if (configData.tintedCategory === 'polarizados') {
+                    isValid = isValid && configData.tintedOptions.color;
+                }
+                break;
+                
+            case 'marca':
+                // Brand selection
+                isValid = configData.brand !== null;
+                break;
+                
+            case 'indice':
+                // Index selection
+                isValid = configData.index !== null;
+                break;
+                
+            case 'resumen':
+                isValid = true;
+                break;
+        }
+        
+        console.log('Validation - Step:', steps[currentStep - 1], 'Valid:', isValid, 'Config:', configData);
+        
+        $('.btn-next').prop('disabled', !isValid).css({
+            'opacity': isValid ? '1' : '0.5',
+            'cursor': isValid ? 'pointer' : 'not-allowed'
+        });
+    }
+    
+    // Update price summary
+    function updatePriceSummary() {
+        // Leer el precio desde el atributo data-price de la tarjeta seleccionada
+        const selectedUseType = document.querySelector('.use-type-card.selected');
+        if (selectedUseType) {
+            configData.base = parseFloat(selectedUseType.dataset.price) || 0;
+            
+            // Add progressive vision price to base if progressive
+            if (configData.useType === 'progressive') {
+                configData.base += configData.progressiveVisionPrice;
+            }
+        } else {
+            configData.base = 0;
+        }
+        
+        // Calculate extras from index only
+        const indexPrice = configData.index ? parseFloat($('.index-card[data-index="' + configData.index + '"]').data('price')) || 0 : 0;
+        configData.extras = indexPrice;
+        
+        // Calculate totals (sin IVA adicional, ya incluido)
+        const total = configData.frame + configData.base + configData.surcharges + configData.treatments + configData.extras;
+        
+        // Update display
+        $('[data-price="base"]').text(configData.base > 0 ? configData.base.toFixed(2) + ' €' : '--');
+        $('[data-price="surcharges"]').text(configData.surcharges > 0 ? configData.surcharges.toFixed(2) + ' €' : '--');
+        $('[data-price="treatments"]').text(configData.treatments > 0 ? configData.treatments.toFixed(2) + ' €' : '--');
+        $('[data-price="extras"]').text(configData.extras > 0 ? configData.extras.toFixed(2) + ' €' : '--');
+        $('[data-price="subtotal"]').text(total.toFixed(2) + ' €');
+        $('[data-price="total"]').text(total.toFixed(2) + ' €');
+    }
+    
+    // Use type selection (delegated event)
+    $('body').on('click', '.use-type-card', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Use type clicked:', $(this).data('use-type'));
+        
+        $('.use-type-card').removeClass('selected').css({
+            'border': '2px solid #ddd',
+            'background': 'white'
+        });
+        $(this).addClass('selected').css({
+            'border': '2px solid #1979c3',
+            'background': '#f0f8ff'
+        });
+        
+        const useType = $(this).data('use-type');
+        configData.useType = useType;
+        
+        if (useType !== 'progressive') {
+            configData.progressiveVision = null;
+            configData.progressiveVisionPrice = 0;
+            $('.progressive-vision-options').slideUp(300);
+        } else {
+            $('.progressive-vision-options').slideDown(300);
+        }
+        
+        console.log('Config data updated:', configData);
+        
+        // Toggle ADD column visibility
+        toggleAddColumn();
+        
+        validateCurrentStep();
+        updatePriceSummary();
+        
+        // Auto-advance if "Sin Graduación" is selected
+        if (useType === 'no_prescription' && currentStep === 1) {
+            setTimeout(function() {
+                goToStep(currentStep + 1);
+            }, 500);
+        }
+    });
+    
+    // Progressive vision selection (delegated event)
+    $('body').on('click', '.progressive-vision-card', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $('.progressive-vision-card').removeClass('selected').css({
+            'border': '2px solid #ddd',
+            'background': 'white'
+        });
+        $(this).addClass('selected').css({
+            'border': '2px solid #1979c3',
+            'background': '#f0f8ff'
+        });
+        
+        const visionType = $(this).data('vision-type');
+        const visionPrice = parseFloat($(this).data('price')) || 0;
+        
+        configData.progressiveVision = visionType;
+        configData.progressiveVisionPrice = visionPrice;
+        
+        validateCurrentStep();
+        updatePriceSummary();
+    });
+
+    // Add hover effects for all clickable cards
+    $('body').on('mouseenter', '.use-type-card, .lens-type-card, .brand-card, .index-card, .progressive-vision-card', function() {
+        if (!$(this).hasClass('selected')) {
+            $(this).css('box-shadow', '0 4px 8px rgba(0,0,0,0.15)');
+        }
+    });
+    
+    $('body').on('mouseleave', '.use-type-card, .lens-type-card, .brand-card, .index-card, .progressive-vision-card', function() {
+        if (!$(this).hasClass('selected')) {
+            $(this).css('box-shadow', '');
+        }
+    });
+    
+    // Lens type selection (delegated event)
+    $('body').on('click', '.lens-type-card', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Lens type clicked:', $(this).data('lens-type'));
+        
+        $('.lens-type-card').removeClass('selected').css({
+            'border': '2px solid #ddd',
+            'background': 'white'
+        });
+        $(this).addClass('selected').css({
+            'border': '2px solid #1979c3',
+            'background': '#f0f8ff'
+        });
+        
+        const lensType = $(this).data('lens-type');
+        const lensPrice = parseFloat($(this).data('price')) || 0;
+        
+        configData.lensType = lensType;
+        
+        // Reset tinted data when changing lens type
+        if (lensType !== 'tinted') {
+            configData.tintedCategory = null;
+            configData.tintedCategoryPrice = 0;
+            configData.tintedOptions = {};
+            configData.surcharges = lensPrice;
+        } else {
+            configData.surcharges = 0; // Will be set in tintado step
+        }
+        
+        validateCurrentStep();
+        updatePriceSummary();
+    });
+    
+    // Tinted category selection
+    $('body').on('click', '.tinted-category-card', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $('.tinted-category-card').removeClass('selected').css({
+            'border': '2px solid #ddd',
+            'background': 'white'
+        });
+        $(this).addClass('selected').css({
+            'border': '2px solid #1979c3',
+            'background': '#f0f8ff'
+        });
+        
+        const category = $(this).data('category');
+        const categoryPrice = parseFloat($(this).data('price')) || 0;
+        
+        configData.tintedCategory = category;
+        configData.tintedCategoryPrice = categoryPrice;
+        configData.surcharges = categoryPrice;
+        configData.tintedOptions = {};
+        
+        // Hide all option panels
+        $('.tinted-basicos-options, .tinted-degradados-options, .tinted-espejados-options, .tinted-polarizados-options').hide();
+        
+        // Show relevant options panel
+        if (category === 'basicos') {
+            $('.tinted-basicos-options').slideDown(300);
+        } else if (category === 'degradados') {
+            $('.tinted-degradados-options').slideDown(300);
+        } else if (category === 'espejados') {
+            $('.tinted-espejados-options').slideDown(300);
+        } else if (category === 'polarizados') {
+            $('.tinted-polarizados-options').slideDown(300);
+        }
+        
+        validateCurrentStep();
+        updatePriceSummary();
+    });
+    
+    // Basicos intensity selection
+    $('body').on('click', '.basicos-intensity-option', function() {
+        $('.basicos-intensity-option').css({'border': '2px solid #ddd', 'background': 'white', 'color': '#333'});
+        $(this).css({'border': '2px solid #333', 'background': '#333', 'color': 'white'});
+        configData.tintedOptions.intensity = $(this).data('intensity');
+        validateCurrentStep();
+    });
+    
+    // Basicos color selection (auto-advance when both intensity and color are selected)
+    $('body').on('click', '.basicos-color-option', function() {
+        $('.basicos-color-option').css({'border': '3px solid transparent', 'transform': 'scale(1)'});
+        $(this).css({'border': '3px solid #1979c3', 'transform': 'scale(1.1)'});
+        configData.tintedOptions.color = $(this).data('color');
+        
+        // Auto-advance if both intensity and color are selected
+        if (configData.tintedOptions.intensity && configData.tintedOptions.color) {
+            setTimeout(function() {
+                goToStep(currentStep + 1);
+            }, 300);
+        }
+    });
+    
+    // Degradados color selection (auto-advance)
+    $('body').on('click', '.degradados-color-option', function() {
+        $('.degradados-color-option').css({'border': '3px solid transparent', 'transform': 'scale(1)'});
+        $(this).css({'border': '3px solid #1979c3', 'transform': 'scale(1.1)'});
+        configData.tintedOptions.color = $(this).data('color');
+        
+        // Auto-advance after color selection
+        setTimeout(function() {
+            goToStep(currentStep + 1);
+        }, 300);
+    });
+    
+    // Espejados color selection (auto-advance)
+    $('body').on('click', '.espejados-color-option', function() {
+        $('.espejados-color-option').css({'border': '3px solid transparent', 'transform': 'scale(1)'});
+        $(this).css({'border': '3px solid #1979c3', 'transform': 'scale(1.1)'});
+        configData.tintedOptions.color = $(this).data('color');
+        
+        // Auto-advance after color selection
+        setTimeout(function() {
+            goToStep(currentStep + 1);
+        }, 300);
+    });
+    
+    // Polarizados color selection (auto-advance)
+    $('body').on('click', '.polarizados-color-option', function() {
+        $('.polarizados-color-option').css({'border': '3px solid transparent', 'transform': 'scale(1)'});
+        $(this).css({'border': '3px solid #1979c3', 'transform': 'scale(1.1)'});
+        configData.tintedOptions.color = $(this).data('color');
+        
+        // Auto-advance after color selection
+        setTimeout(function() {
+            goToStep(currentStep + 1);
+        }, 300);
+    });
+    
+    // Brand selection (delegated event)
+    $('body').on('click', '.brand-card', function() {
+        $('.brand-card').removeClass('selected').css({
+            'border': '2px solid #ddd',
+            'background': 'white'
+        });
+        $(this).addClass('selected').css({
+            'border': '2px solid #1979c3',
+            'background': '#f0f8ff'
+        });
+        
+        const brand = $(this).data('brand');
+        // Use current-price (set by updateBrandPrices) or fallback to normal price
+        const brandPrice = parseFloat($(this).data('current-price')) || parseFloat($(this).data('price')) || 0;
+        
+        configData.brand = brand;
+        configData.treatments = brandPrice;
+        
+        validateCurrentStep();
+        updatePriceSummary();
+    });
+    
+    // Index selection (delegated event)
+    $('body').on('click', '.index-card', function() {
+        $('.index-card').removeClass('selected').css({
+            'border': '2px solid #ddd',
+            'background': 'white'
+        });
+        $(this).addClass('selected').css({
+            'border': '2px solid #1979c3',
+            'background': '#f0f8ff'
+        });
+        
+        const index = $(this).data('index');
+        const indexPrice = parseFloat($(this).data('price')) || 0;
+        
+        configData.index = index;
+        configData.extras = indexPrice;
+        
+        validateCurrentStep();
+        updatePriceSummary();
+    });
+    
+    // Prescription field changes
+    $('body').on('change', '.prescription-field', function() {
+        const name = $(this).attr('name');
+        configData.prescription[name] = $(this).val();
+        validateCurrentStep();
+    });
+    
+    // Dual PD checkbox toggle
+    $('body').on('change', '#dual-pd-checkbox', function() {
+        if ($(this).is(':checked')) {
+            // Mostrar campos duales
+            $('#dual-pd-fields').slideDown(300);
+            // Deshabilitar campo PD de la tabla (select)
+            $('select[name="pd"]').prop('disabled', true).val('').css({
+                'background-color': '#f5f5f5',
+                'cursor': 'not-allowed',
+                'opacity': '0.6'
+            });
+            // Deshabilitar también input si existe
+            $('input[name="pd"]').prop('disabled', true);
+        } else {
+            // Ocultar campos duales
+            $('#dual-pd-fields').slideUp(300);
+            // Habilitar campo PD de la tabla (select)
+            $('select[name="pd"]').prop('disabled', false).css({
+                'background-color': '',
+                'cursor': '',
+                'opacity': ''
+            });
+            // Habilitar también input si existe
+            $('input[name="pd"]').prop('disabled', false);
+            // Limpiar valores de campos duales
+            $('input[name="pd_right"], input[name="pd_left"]').val('');
+        }
+    });
+    
+    // CIL change handler - Enable/disable AXIS
+    $('body').on('change', 'select[name="od_cil"], select[name="oi_cil"]', function() {
+        updateAxisState();
+    });
+    
+    // File upload handler - DISABLED (Coming soon)
+    /* 
+    $('#upload-btn').on('click', function() {
+        $('#prescription-upload').click();
+    });
+    
+    $('#prescription-upload').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+            
+            if (!allowedTypes.includes(file.type)) {
+                alert('Formato no permitido. Use JPG, PNG o PDF.');
+                this.value = '';
+                return;
+            }
+            
+            if (file.size > maxSize) {
+                alert('El archivo es demasiado grande. Máximo 5MB.');
+                this.value = '';
+                return;
+            }
+            
+            // Update UI immediately
+            $('#file-name').text(file.name + ' (Subiendo...)').css('color', '#f39c12');
+            
+            // Upload file via AJAX
+            const formData = new FormData();
+            formData.append('prescription_file', file);
+            formData.append('form_key', '<?= $block->escapeHtmlAttr($block->getFormKey()) ?>');
+            
+            $.ajax({
+                url: '<?= /* @noEscape */ $block->getUploadUrl() ?>',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        configData.attachmentId = response.attachment_id;
+                        configData.prescriptionFile = file;
+                        $('#file-name').text(file.name + ' ✓').css('color', '#27ae60');
+                        console.log('File uploaded successfully:', response);
+                    } else {
+                        alert('Error al subir archivo: ' + (response.error || 'Error desconocido'));
+                        $('#file-name').text('Error al subir').css('color', '#e74c3c');
+                        $('#prescription-upload').val('');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Upload error:', error);
+                    alert('Error al subir el archivo. Por favor, intente nuevamente.');
+                    $('#file-name').text('Error al subir').css('color', '#e74c3c');
+                    $('#prescription-upload').val('');
+                }
+            });
+        }
+    });
+    */
+    
+    // Navigation buttons (delegated events)
+    $('body').on('click', '.btn-prev', function(e) {
+        e.preventDefault();
+        console.log('Previous button clicked, current step:', currentStep);
+        goToStep(currentStep - 1);
+    });
+    
+    $('body').on('click', '.btn-next', function(e) {
+        e.preventDefault();
+        console.log('Next button clicked, current step:', currentStep, 'disabled:', $(this).prop('disabled'));
+        if (!$(this).prop('disabled')) {
+            goToStep(currentStep + 1);
+        } else {
+            console.log('Button is disabled, validation failed');
+        }
+    });
+    
+    // Edit step buttons (delegated event)
+    $('body').on('click', '.btn-edit-step', function() {
+        const step = parseInt($(this).data('step'));
+        goToStep(step);
+    });
+    
+    // Add to cart button
+    $('.btn-add-to-cart').on('click', function(e) {
+        e.preventDefault();
+        
+        // Get product ID and size from product page
+        // Use simple product ID from URL if available, otherwise use configurable product ID
+        const productId = simpleProductIdFromUrl || <?= $block->getProduct()->getId() ?>;
+        const configurableProductId = <?= $block->getProduct()->getId() ?>;
+        const productSku = '<?= $block->getProduct()->getSku() ?>';
+        const productName = '<?= addslashes($block->getProduct()->getName()) ?>';
+        const productType = '<?= $block->getProduct()->getTypeId() ?>';
+        const sizeAttributeId = <?= $block->getSizeAttributeId() ?: 0 ?>;
+        
+        console.log('🔍 PRODUCT DEBUG INFO:', {
+            productId: productId,
+            configurableProductId: configurableProductId,
+            simpleProductIdFromUrl: simpleProductIdFromUrl,
+            productSku: productSku,
+            productName: productName,
+            productType: productType,
+            sizeAttributeId: sizeAttributeId,
+            isConfigurable: productType === 'configurable',
+            usingSimpleProduct: !!simpleProductIdFromUrl
+        });
+        
+        // Function to find selected size value in different formats
+        let selectedSize = null;
+        if (sizeAttributeId && sizeAttributeId > 0) {
+            // Try different selectors for Magento configurable products
+            
+            // 1. Radio buttons
+            selectedSize = $('input[name="super_attribute[' + sizeAttributeId + ']"]:checked').val();
+            
+            // 2. Select dropdown
+            if (!selectedSize) {
+                const selectElement = $('select[name="super_attribute[' + sizeAttributeId + ']"]');
+                selectedSize = selectElement.val();
+                
+                // If select exists but value is empty, check if there's a selected option
+                if (!selectedSize && selectElement.length > 0) {
+                    const selectedOption = selectElement.find('option:selected');
+                    selectedSize = selectedOption.val() || selectedOption.attr('value');
+                }
+            }
+            
+            // 3. Swatch option selected
+            if (!selectedSize) {
+                selectedSize = $('.swatch-attribute[attribute-id="' + sizeAttributeId + '"] .swatch-option.selected').attr('option-id');
+            }
+            
+            // 4. Try with data-attribute-id
+            if (!selectedSize) {
+                selectedSize = $('[data-attribute-id="' + sizeAttributeId + '"]').find('.swatch-option.selected').attr('option-id');
+            }
+            
+            // 5. Check if there's a hidden input with the value
+            if (!selectedSize) {
+                selectedSize = $('input[name="super_attribute[' + sizeAttributeId + ']"]').val();
+            }
+            
+            // 6. Last resort: check for any select with attribute in name
+            if (!selectedSize) {
+                const anySelect = $('select[name*="super_attribute"]:visible');
+                if (anySelect.length === 1) {
+                    selectedSize = anySelect.val();
+                }
+            }
+            
+            // 7. Use saved attribute from URL (from product page)
+            if (!selectedSize && savedSuperAttribute[sizeAttributeId]) {
+                selectedSize = savedSuperAttribute[sizeAttributeId];
+                console.log('Using saved super_attribute from URL:', selectedSize);
+            }
+        }
+        
+        console.log('Size validation:', {
+            sizeAttributeId: sizeAttributeId,
+            selectedSize: selectedSize,
+            savedSuperAttribute: savedSuperAttribute,
+            radioFound: $('input[name="super_attribute[' + sizeAttributeId + ']"]:checked').length,
+            selectFound: $('select[name="super_attribute[' + sizeAttributeId + ']"]').length,
+            selectValue: $('select[name="super_attribute[' + sizeAttributeId + ']"]').val(),
+            swatchFound: $('.swatch-attribute[attribute-id="' + sizeAttributeId + '"] .swatch-option.selected').length,
+            allSelects: $('select[name*="super_attribute"]').length
+        });
+        
+        if (sizeAttributeId && sizeAttributeId > 0 && !selectedSize) {
+            alert('Por favor, seleccione una talla antes de añadir al carrito.');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            return;
+        }
+        
+        // Prepare configuration data in the format expected by the controller
+        const requestData = {
+            product_id: productId,
+            qty: 1,
+            configuration: {
+                prescription: configData.prescription,
+                use_type: configData.useType,
+                progressive_vision: configData.progressiveVision,
+                lens: {
+                    type: configData.lensType,
+                    brand: configData.brand,
+                    index: configData.index
+                },
+                tinted_category: configData.tintedCategory,
+                tinted_options: configData.tintedOptions,
+                treatments: [],
+                prices: {
+                    frame: configData.frame,
+                    base: configData.base,
+                    surcharges: configData.surcharges,
+                    treatments: configData.treatments,
+                    extras: configData.extras
+                },
+                attachment_id: configData.attachmentId
+            }
+        };
+        
+        // Add size if available (only for configurable products)
+        if (sizeAttributeId && sizeAttributeId > 0 && selectedSize) {
+            requestData.configuration.super_attribute = {};
+            requestData.configuration.super_attribute[sizeAttributeId] = selectedSize;
+            console.log('Added super_attribute:', requestData.configuration.super_attribute);
+        } else {
+            console.log('No super_attribute needed (simple product or no size selected)');
+        }
+        
+        console.log('Adding to cart with data:', requestData);
+        
+        // Add form_key to request
+        requestData.form_key = '<?= $block->escapeJs($block->getFormKey()) ?>';
+        
+        // Show loading
+        $(this).prop('disabled', true).text('Añadiendo...');
+        
+        // Add to cart via AJAX
+        $.ajax({
+            url: '<?= $block->getAddToCartUrl() ?>',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestData),
+            dataType: 'json',
+            success: function(response) {
+                console.log('Add to cart response:', response);
+                if (response.success) {
+                    // Redirect to cart
+                    window.location.href = response.cart_url || '<?= $block->getUrl('checkout/cart') ?>';
+                } else {
+                    alert('Error: ' + (response.message || 'Error desconocido al añadir al carrito'));
+                    $('.btn-add-to-cart').prop('disabled', false).text('Añadir al Carrito');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error adding to cart:', xhr.responseText);
+                let errorMessage = 'Error al añadir al carrito.';
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    errorMessage = errorResponse.message || errorMessage;
+                } catch(e) {
+                    // Use default message
+                }
+                alert(errorMessage + ' Por favor, intente nuevamente.');
+                $('.btn-add-to-cart').prop('disabled', false).text('Añadir al Carrito');
+            }
+        });
+    });
+    
+    // Initialize
+    console.log('Prescription configurator initializing...');
+    console.log('Steps:', steps);
+    console.log('Use type cards found:', $('.use-type-card').length);
+    
+    // Initialize ADD column visibility (hidden by default)
+    toggleAddColumn();
+    
+    // Initialize AXIS state (disabled by default)
+    updateAxisState();
+    
+    goToStep(1);
+    updatePriceSummary();
+    
+    console.log('Prescription configurator initialized');
+});
+</script>
+
+<style>
+/* ============================================
+   ESTILOS BASE DEL CONFIGURADOR
+   ============================================ */
+
+/* Progress Bar */
+.configurator-progress {
+    margin-bottom: 30px;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.progress-line {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    height: 3px;
+    background: #213b85;
+    z-index: 2;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-steps .step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+}
+
+.progress-steps .step-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background: #ddd;
+    color: #666;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.progress-steps .step.active .step-number {
+    background: #213b85;
+    color: white;
+}
+
+.progress-steps .step.completed .step-number {
+    background: #213b85;
+    color: white;
+}
+
+.progress-steps .step-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+}
+
+.progress-steps .step.active .step-label {
+    color: #213b85;
+    font-weight: bold;
+}
+
+/* Cards Base */
+.use-type-card,
+.lens-type-card,
+.brand-card,
+.index-card {
+    transition: all 0.3s ease;
+}
+
+.use-type-card:hover,
+.lens-type-card:hover,
+.brand-card:hover,
+.index-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.use-type-card.selected,
+.lens-type-card.selected,
+.brand-card.selected,
+.index-card.selected {
+    border-color: #1979c3 !important;
+    background-color: #f0f8ff !important;
+}
+
+/* ============================================
+   RESPONSIVE MEDIA QUERIES - MOBILE FIRST
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Layout móvil: cambiar a columna única y reordenar */
+    .configurator-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    
+    /* Configurador primero en móvil */
+    .configurator-steps {
+        order: 1 !important;
+        padding: 20px 15px !important;
+    }
+    
+    /* Resumen después en móvil */
+    .configurator-summary {
+        order: 2 !important;
+        position: static !important;
+        padding: 20px 15px !important;
+    }
+    
+    /* Selector de uso: una sola columna */
+    .use-type-selector {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    /* Progreso: versión compacta */
+    .progress-steps {
+        gap: 8px !important;
+    }
+    
+    .progress-steps .step-number {
+        width: 30px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        font-size: 14px !important;
+    }
+    
+    .progress-steps .step-label {
+        font-size: 11px !important;
+    }
+    
+    /* Navegación: botones en columna */
+    .configurator-navigation {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .configurator-navigation button {
+        width: 100% !important;
+        padding: 14px 20px !important;
+    }
+    
+    /* Títulos más pequeños */
+    .step-content h2 {
+        font-size: 20px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .price-summary h3 {
+        font-size: 20px !important;
+    }
+    
+    /* Resumen de configuración: stack vertical */
+    .summary-section {
+        margin-bottom: 15px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra pequeño: ajustes adicionales */
+    .configurator-steps,
+    .configurator-summary {
+        padding: 15px 10px !important;
+    }
+    
+    .progress-steps .step-number {
+        width: 28px !important;
+        height: 28px !important;
+        line-height: 28px !important;
+        font-size: 12px !important;
+    }
+    
+    .progress-steps .step-label {
+        font-size: 10px !important;
+    }
+    
+    .step-content h2 {
+        font-size: 18px !important;
+    }
+    
+    .use-type-card h3,
+    .lens-type-card h3,
+    .brand-card h3 {
+        font-size: 16px !important;
+    }
+}
+</style>
