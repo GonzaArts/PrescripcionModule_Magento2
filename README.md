@@ -1061,14 +1061,6 @@ php bin/magento cache:status
 - Ejemplos de extensibilidad
 - Documentación de API
 
-Ver historial completo en [CHANGELOG.md](CHANGELOG.md)
-
-## 📄 Licencia
-
-Proprietary - Copyright © 2025 Powerline
-
-Todos los derechos reservados. Este módulo es propiedad exclusiva de Powerline y no puede ser distribuido, modificado o utilizado sin autorización expresa.
-
 ## 👥 Contribución
 
 Este es un módulo propietario. Para reportar bugs o solicitar funcionalidades:
@@ -1081,7 +1073,7 @@ Este es un módulo propietario. Para reportar bugs o solicitar funcionalidades:
 ## 🤝 Soporte y Contacto
 
 ### Soporte Técnico
-- **Email**: soporte@powerline.com
+- **Email**: gonzalo@powerlinedesign.es
 - **Documentación**: Ver secciones anteriores de este README
 - **Logs**: `var/log/prescription.log`, `var/log/system.log`
 
@@ -1176,8 +1168,7 @@ tail -n 50 var/log/prescription.log
 **PHP**: 8.1+  
 **Licencia**: Proprietary  
 
-**Desarrollado por**: Powerline Development Team  
-**Copyright**: © 2025 Powerline  
+**Desarrollado por**: GonzaArts Powerline Design  
 **Fecha de lanzamiento**: Diciembre 2025  
 
 ---
